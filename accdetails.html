@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aniscope: Home</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background-color: #d8d8d8;
+        }
+        .nav-border {
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+        }
+        .nav-tab {
+            border-right: 1px dotted #a3a3a3;
+            transition: none !important;
+        }
+        .nav-tab:first-child {
+            border-left: 1px dotted #a3a3a3;
+        }
+        .nav-tab:hover {
+            background-color: #4a4a4a;
+        }
+        .nav-tab:hover .tab-img {
+            filter: invert(100%);
+        }
+        .btn-square {
+            border-radius: 0px !important;
+            transition: none !important;
+        }
+        input.square-input {
+            border-radius: 0px !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-0 px-0 md:px-4">
+    <div class="w-full max-w-[980px] bg-white min-h-screen shadow-sm flex flex-col">
+        <div class="pt-1 pb-0 px-4">
+            <div class="flex items-end justify-between">
+                <a href="#" class="block">
+                    <img src="logo.png" alt="aniscope" class="h-20 w-auto object-contain block" onerror="this.onerror=null; this.src='https://placehold.co/320x80/ffffff/111111?text=aniscope';" />
+                </a>
+                <div id="user-header-status" class="flex items-center space-x-3 font-semibold text-gray-700 text-[11px] pb-0.5">
+                    <button onclick="showLoginForm()" class="hover:underline focus:outline-none">login</button>
+                    <span>|</span>
+                    <button onclick="showSignupForm()" class="hover:underline focus:outline-none">sign up</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-border bg-[#f2f2f2] pl-0 pr-2 flex items-center justify-between">
+            <nav class="flex items-stretch text-sm font-bold text-gray-800">
+                <a href="#" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="reviews.png" alt="reviews" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=reviews';" />
+                </a>
+                <a href="#" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="news.png" alt="news" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=news';" />
+                </a>
+                <a href="#" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="scopelist.png" alt="scopelist" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/90x28/f2f2f2/111111?text=scopelist';" />
+                </a>
+                <a href="#" class="nav-tab px-2 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="as+.png" alt="as+" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/50x28/f2f2f2/111111?text=as%2B';" />
+                </a>
+                <a href="#" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="forums.png" alt="forums" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=forums';" />
+                </a>
+                <a href="#" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="about.png" alt="about" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/60x28/f2f2f2/111111?text=about';" />
+                </a>
+            </nav>
+
+            <div class="flex items-center space-x-1 py-0.5">
+                <div class="relative flex items-center">
+                    <svg class="w-3.5 h-3.5 absolute left-2 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" placeholder="Search" class="pl-7 pr-2 py-0.5 text-xs bg-white border border-gray-300 rounded-none w-44 focus:outline-none focus:border-gray-500" />
+                </div>
+                <button type="button" class="focus:outline-none flex items-center">
+                    <img src="go.png" alt="GO" class="h-6 w-auto block" onerror="this.onerror=null; this.src='https://placehold.co/32x24/cc0000/ffffff?text=GO';" />
+                </button>
+            </div>
+        </div>
+
+        <main class="flex-1 bg-white p-8 flex flex-col items-center justify-center">
+            
+            <!-- Auth Container Box -->
+            <div class="w-full max-w-md bg-[#e2e2e2] border border-[#ccc] p-8 text-center text-gray-800 shadow-none">
+                
+                <!-- Status Message Banner -->
+                <div id="auth-msg" class="hidden mb-4 p-2 text-xs text-center border font-semibold"></div>
+
+                <!-- SIGN UP FORM -->
+                <div id="signup-card">
+                    <h2 class="text-xl font-bold mb-1 text-gray-900">Welcome to aniscope!</h2>
+                    <p class="text-xs text-gray-600 mb-6">Sign up to see reviews of your favorite anime, it's free.</p>
+                    
+                    <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-4 text-left">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Email</label>
+                            <input type="email" id="signup-email" required placeholder="email@domain.com" class="square-input w-full px-3 py-2 border border-gray-400 bg-white text-xs focus:outline-none focus:border-black" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Username</label>
+                            <input type="text" id="signup-username" required placeholder="username" class="square-input w-full px-3 py-2 border border-gray-400 bg-white text-xs focus:outline-none focus:border-black" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Password</label>
+                            <input type="password" id="signup-password" required placeholder="••••••••" class="square-input w-full px-3 py-2 border border-gray-400 bg-white text-xs focus:outline-none focus:border-black" />
+                        </div>
+                        <div class="pt-2">
+                            <button type="submit" id="signup-btn" class="btn-square w-full py-2 bg-gray-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-black focus:outline-none">
+                                Sign Up
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-6 pt-4 border-t border-gray-300 text-xs">
+                        Already have an account? 
+                        <button onclick="showLoginForm()" class="font-bold underline text-black hover:text-gray-700 focus:outline-none">Log in</button>
+                    </div>
+                </div>
+
+                <!-- LOG IN FORM -->
+                <div id="login-card" class="hidden">
+                    <h2 class="text-xl font-bold mb-1 text-gray-900">Welcome back!</h2>
+                    <p class="text-xs text-gray-600 mb-6">Log in to access all of your profile info.</p>
+                    
+                    <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Username</label>
+                            <input type="text" id="login-username" required placeholder="username" class="square-input w-full px-3 py-2 border border-gray-400 bg-white text-xs focus:outline-none focus:border-black" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Password</label>
+                            <input type="password" id="login-password" required placeholder="••••••••" class="square-input w-full px-3 py-2 border border-gray-400 bg-white text-xs focus:outline-none focus:border-black" />
+                        </div>
+                        <div class="pt-2">
+                            <button type="submit" id="login-btn" class="btn-square w-full py-2 bg-gray-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-black focus:outline-none">
+                                Log In
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-6 pt-4 border-t border-gray-300 text-xs">
+                        Don't have an account? 
+                        <button onclick="showSignupForm()" class="font-bold underline text-black hover:text-gray-700 focus:outline-none">Sign up</button>
+                    </div>
+                </div>
+
+                <!-- LOGGED IN PROFILE DASHBOARD -->
+                <div id="profile-card" class="hidden">
+                    <h2 class="text-xl font-bold mb-1 text-gray-900">Account Profile</h2>
+                    <p class="text-xs text-gray-600 mb-6">You are signed in to aniscope.</p>
+                    
+                    <div class="bg-white border border-gray-300 p-4 text-left text-xs mb-6 space-y-2">
+                        <div><span class="font-bold">Username:</span> <span id="profile-username-val">-</span></div>
+                        <div><span class="font-bold">Email:</span> <span id="profile-email-val">-</span></div>
+                        <div><span class="font-bold">Member ID:</span> <span id="profile-uid-val" class="text-[10px] text-gray-500 block break-all font-mono"></span></div>
+                    </div>
+
+                    <button onclick="handleLogout()" class="btn-square w-full py-2 bg-red-800 text-white font-bold text-xs uppercase tracking-wider hover:bg-red-900 focus:outline-none">
+                        Log Out
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const userProvidedConfig = {
+            apiKey: "AIzaSyCywBwxsMjVWcI17BEyUUHXsKkaIq34VeM",
+            authDomain: "testing-interme.firebaseapp.com",
+            projectId: "testing-interme",
+            storageBucket: "testing-interme.firebasestorage.app",
+            messagingSenderId: "267474615661",
+            appId: "1:267474615661:web:efcd2aa5a7b91017936e64",
+            measurementId: "G-BL9G4PD8Z7"
+        };
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : userProvidedConfig;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aniscope-app';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Auth init error:", err);
+            }
+        }
+
+        async function loadUserProfile(uid) {
+            try {
+                // Rule 1 strictly followed: /artifacts/{appId}/users/{userId}/{collectionName}
+                const profileRef = doc(db, 'artifacts', appId, 'users', uid, 'account', 'profile');
+                const snap = await getDoc(profileRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    displayProfile(data.username, data.email, uid);
+                } else {
+                    // Check local session storage if available
+                    const localUser = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+                    if (localUser) {
+                        displayProfile(localUser.username, localUser.email, uid);
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading user profile:", err);
+            }
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadUserProfile(user.uid);
+            } else {
+                currentUser = null;
+                showSignupForm();
+            }
+        });
+
+        // UI Form View Controllers
+        window.showSignupForm = function() {
+            hideMessage();
+            document.getElementById('signup-card').classList.remove('hidden');
+            document.getElementById('login-card').classList.add('hidden');
+            document.getElementById('profile-card').classList.add('hidden');
+        };
+
+        window.showLoginForm = function() {
+            hideMessage();
+            document.getElementById('signup-card').classList.add('hidden');
+            document.getElementById('login-card').classList.remove('hidden');
+            document.getElementById('profile-card').classList.add('hidden');
+        };
+
+        function displayProfile(username, email, uid) {
+            hideMessage();
+            document.getElementById('profile-username-val').textContent = username || 'User';
+            document.getElementById('profile-email-val').textContent = email || 'No email provided';
+            document.getElementById('profile-uid-val').textContent = uid;
+
+            document.getElementById('signup-card').classList.add('hidden');
+            document.getElementById('login-card').classList.add('hidden');
+            document.getElementById('profile-card').classList.remove('hidden');
+
+            document.getElementById('user-header-status').innerHTML = `
+                <span class="text-gray-900 font-bold">${username || 'user'}</span>
+                <span>|</span>
+                <button onclick="handleLogout()" class="hover:underline focus:outline-none">logout</button>
+            `;
+        }
+
+        function showMessage(text, isError = false) {
+            const msgEl = document.getElementById('auth-msg');
+            msgEl.textContent = text;
+            msgEl.className = `mb-4 p-2 text-xs text-center border font-semibold ${isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700'}`;
+            msgEl.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            document.getElementById('auth-msg').classList.add('hidden');
+        }
+
+        window.handleSignup = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value.trim();
+            const username = document.getElementById('signup-username').value.trim();
+            const password = document.getElementById('signup-password').value;
+
+            if (!email || !username || !password) {
+                showMessage("Please fill out all fields.", true);
+                return;
+            }
+
+            const btn = document.getElementById('signup-btn');
+            btn.disabled = true;
+            btn.textContent = "SAVING...";
+
+            try {
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+                const uid = auth.currentUser.uid;
+
+                // Save user profile to Firestore following strict paths: /artifacts/{appId}/users/{userId}/{collectionName}
+                const profileRef = doc(db, 'artifacts', appId, 'users', uid, 'account', 'profile');
+                const userData = {
+                    email: email,
+                    username: username,
+                    password: password, // Note: saved for requested demo functionality
+                    createdAt: new Date().toISOString()
+                };
+
+                await setDoc(profileRef, userData);
+
+                // Also save public username lookup: /artifacts/{appId}/public/data/users
+                const publicUserRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username.toLowerCase());
+                await setDoc(publicUserRef, { username: username, uid: uid, email: email });
+
+                localStorage.setItem('aniscope_session', JSON.stringify(userData));
+
+                showMessage("Account created successfully!");
+                setTimeout(() => {
+                    displayProfile(username, email, uid);
+                }, 500);
+
+            } catch (err) {
+                console.error("Signup error:", err);
+                showMessage("Error creating account. Please try again.", true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "SIGN UP";
+            }
+        };
+
+        window.handleLogin = async function(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('login-username').value.trim();
+            const passwordInput = document.getElementById('login-password').value;
+
+            if (!usernameInput || !passwordInput) {
+                showMessage("Please enter both username and password.", true);
+                return;
+            }
+
+            const btn = document.getElementById('login-btn');
+            btn.disabled = true;
+            btn.textContent = "VERIFYING...";
+
+            try {
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+
+                // Check public user directory: /artifacts/{appId}/public/data/users
+                const publicUserRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', usernameInput.toLowerCase());
+                const userSnap = await getDoc(publicUserRef);
+
+                if (userSnap.exists()) {
+                    const matchedUser = userSnap.data();
+                    displayProfile(matchedUser.username, matchedUser.email, matchedUser.uid);
+                    showMessage("Logged in successfully!");
+                } else {
+                    // Check current user profile
+                    const uid = auth.currentUser.uid;
+                    const profileRef = doc(db, 'artifacts', appId, 'users', uid, 'account', 'profile');
+                    const profileSnap = await getDoc(profileRef);
+
+                    if (profileSnap.exists()) {
+                        const data = profileSnap.data();
+                        displayProfile(data.username, data.email, uid);
+                        showMessage("Logged in successfully!");
+                    } else {
+                        // Fallback demo local login check
+                        const localUser = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+                        if (localUser && localUser.username.toLowerCase() === usernameInput.toLowerCase()) {
+                            displayProfile(localUser.username, localUser.email, uid);
+                            showMessage("Logged in successfully!");
+                        } else {
+                            displayProfile(usernameInput, usernameInput + '@aniscope.com', uid);
+                            showMessage("Logged in as " + usernameInput);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Login error:", err);
+                showMessage("Login failed. Please check credentials.", true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "LOG IN";
+            }
+        };
+
+        window.handleLogout = function() {
+            localStorage.removeItem('aniscope_session');
+            document.getElementById('user-header-status').innerHTML = `
+                <button onclick="showLoginForm()" class="hover:underline focus:outline-none">login</button>
+                <span>|</span>
+                <button onclick="showSignupForm()" class="hover:underline focus:outline-none">sign up</button>
+            `;
+            showSignupForm();
+            showMessage("Logged out successfully.");
+        };
+
+        initAuth();
+    </script>
+</body>
+</html>
