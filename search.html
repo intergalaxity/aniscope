@@ -176,13 +176,20 @@
             let q = params.get('query');
             if (!q) {
                 const pathParts = window.location.pathname.split('/').filter(Boolean);
-                const searchIdx = pathParts.findIndex(p => p.startsWith('search='));
+                const searchIdx = pathParts.findIndex(p => p.startsWith('search=') || p.includes('search'));
                 if (searchIdx !== -1) {
-                    q = decodeURIComponent(pathParts[searchIdx].replace('search=', ''));
+                    const matchedPart = pathParts[searchIdx];
+                    if (matchedPart.startsWith('search=')) {
+                        q = decodeURIComponent(matchedPart.replace('search=', ''));
+                    } else if (pathParts[searchIdx + 1]) {
+                        q = decodeURIComponent(pathParts[searchIdx + 1]);
+                    }
                 } else {
                     const lastPart = pathParts[pathParts.length - 1];
-                    if (lastPart && lastPart.startsWith('search=')) {
-                        q = decodeURIComponent(lastPart.replace('search=', ''));
+                    if (lastPart && lastPart.includes('search=')) {
+                        q = decodeURIComponent(lastPart.split('search=')[1]);
+                    } else if (lastPart && lastPart !== 'search.html' && lastPart !== 'search') {
+                        q = decodeURIComponent(lastPart);
                     }
                 }
             }
@@ -197,13 +204,13 @@
             currentTab = tab;
             ['all', 'users', 'reviews', 'comments'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
-                if (t === tab) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            renderResults();
+        // Global search redirect helper
+        window.handleGlobalSearch = function(event) {
+            event.preventDefault();
+            const q = document.getElementById('global-search-input').value.trim();
+            if (q) {
+                window.location.href = `search.html?query=${encodeURIComponent(q)}`;
+            }
         };
 
         async function performSearch() {
