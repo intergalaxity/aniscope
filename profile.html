@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>aniscope: Profile</title>
+    <title id="page-title">aniscope: profile</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -239,7 +239,17 @@
         let viewedUsername = "";
 
         const urlParams = new URLSearchParams(window.location.search);
-        const requestedUser = urlParams.get('u');
+        let requestedUser = urlParams.get('u');
+
+        if (!requestedUser) {
+            const pathParts = window.location.pathname.split('/').filter(Boolean);
+            if (pathParts.length === 1) {
+                const reservedPaths = ['profile', 'profile.html', 'index', 'index.html', 'login', 'login.html', 'signup', 'signup.html'];
+                if (!reservedPaths.includes(pathParts[0].toLowerCase())) {
+                    requestedUser = pathParts[0];
+                }
+            }
+        }
 
         if (loggedInSession && loggedInSession.username) {
             const headerStatus = document.getElementById('user-header-status');
@@ -274,12 +284,14 @@
                     document.getElementById('profile-username').innerText = "user not found";
                     document.getElementById('profile-joined').innerText = "";
                     document.getElementById('profile-me-text').innerText = "this user profile does not exist.";
+                    document.getElementById('page-title').innerText = "aniscope: User Not Found";
                     return;
                 }
 
                 profileUserData = userSnap.data();
 
                 document.getElementById('profile-username').innerText = profileUserData.username;
+                document.getElementById('page-title').innerText = `aniscope: ${profileUserData.username}`;
                 
                 if (profileUserData.createdAt) {
                     const joinedDate = new Date(profileUserData.createdAt);
@@ -413,7 +425,7 @@
                 }));
 
                 closeSettingsModal();
-                window.location.href = `profile.html?u=${encodeURIComponent(newUsername)}`;
+                window.location.href = `/${encodeURIComponent(newUsername)}`;
 
             } catch (err) {
                 statusMsg.innerText = err.message || "failed to save settings. try again.";
