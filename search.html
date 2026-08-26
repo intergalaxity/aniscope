@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">aniscope: Search</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background-color: #d8d8d8;
+        }
+        .nav-border {
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+        }
+        .nav-tab {
+            border-right: 1px dotted #a3a3a3;
+            transition: none !important;
+        }
+        .nav-tab:first-child {
+            border-left: 1px dotted #a3a3a3;
+        }
+        .nav-tab:hover {
+            background-color: #4a4a4a;
+        }
+        .nav-tab:hover .tab-img {
+            filter: invert(100%);
+        }
+        .btn-square {
+            border-radius: 0px !important;
+            transition: none !important;
+        }
+        .square-input {
+            border-radius: 0px !important;
+        }
+        .search-box {
+            background-color: #f7f7f7;
+            border: 1px solid #d0d0d0;
+        }
+        .section-header {
+            background-color: #e2e2e2;
+            border-bottom: 1px solid #ccc;
+        }
+        .tab-btn {
+            border: 1px solid #ccc;
+            border-bottom: none;
+            background-color: #e8e8e8;
+        }
+        .tab-btn.active {
+            background-color: #ffffff;
+            border-top: 2px solid #000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-0 px-0 md:px-4">
+    <div class="w-full max-w-[980px] bg-white min-h-screen shadow-sm flex flex-col">
+        
+        <div class="pt-1 pb-0 px-4">
+            <div class="flex items-end justify-between">
+                <a href="index.html" class="block">
+                    <img src="logo.png" alt="aniscope" class="h-20 w-auto object-contain block" onerror="this.onerror=null; this.src='https://placehold.co/320x80/ffffff/111111?text=aniscope';" />
+                </a>
+                <div id="user-header-status" class="flex items-center space-x-3 font-semibold text-gray-700 text-[11px] pb-0.5">
+                    <a href="login.html" class="hover:underline focus:outline-none">login</a>
+                    <span>|</span>
+                    <a href="signup.html" class="hover:underline focus:outline-none">sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-border bg-[#f2f2f2] pl-0 pr-2 flex items-center justify-between">
+            <nav class="flex items-stretch text-sm font-bold text-gray-800">
+                <a href="index.html" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="reviews.png" alt="reviews" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=reviews';" />
+                </a>
+                <a href="index.html" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="news.png" alt="news" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=news';" />
+                </a>
+                <a href="index.html" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="scopelist.png" alt="scopelist" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/90x28/f2f2f2/111111?text=scopelist';" />
+                </a>
+                <a href="index.html" class="nav-tab px-2 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="as+.png" alt="as+" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/50x28/f2f2f2/111111?text=as%2B';" />
+                </a>
+                <a href="index.html" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="forums.png" alt="forums" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=forums';" />
+                </a>
+                <a href="index.html" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="about.png" alt="about" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/60x28/f2f2f2/111111?text=about';" />
+                </a>
+            </nav>
+
+            <form id="global-search-form" onsubmit="handleGlobalSearch(event)" class="flex items-center space-x-1 py-0.5">
+                <div class="relative flex items-center">
+                    <svg class="w-3.5 h-3.5 absolute left-2 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="global-search-input" placeholder="Search" class="square-input pl-7 pr-2 py-0.5 text-xs bg-white border border-gray-300 w-44 focus:outline-none focus:border-gray-500" />
+                </div>
+                <button type="submit" class="focus:outline-none flex items-center cursor-pointer">
+                    <img src="go.png" alt="GO" class="h-6 w-auto block" onerror="this.onerror=null; this.src='https://placehold.co/32x24/cc0000/ffffff?text=GO';" />
+                </button>
+            </form>
+        </div>
+
+        <main class="flex-1 bg-white p-6 md:p-8">
+            <div class="max-w-4xl mx-auto flex flex-col space-y-4">
+                <div class="flex items-center justify-between border-b border-gray-300 pb-2">
+                    <h1 id="search-heading" class="text-sm font-bold text-gray-900 uppercase tracking-wider">search results for: ""</h1>
+                    <div class="text-xs text-gray-500 font-semibold" id="search-count-summary">0 results found</div>
+                </div>
+
+                <div class="flex space-x-1 text-xs">
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn active px-3 py-1.5 cursor-pointer">all results</button>
+                    <button onclick="switchTab('users')" id="tab-users" class="tab-btn px-3 py-1.5 cursor-pointer">users</button>
+                    <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-btn px-3 py-1.5 cursor-pointer">reviews</button>
+                    <button onclick="switchTab('comments')" id="tab-comments" class="tab-btn px-3 py-1.5 cursor-pointer">comments</button>
+                </div>
+
+                <div class="search-box p-4 min-h-[300px] flex flex-col">
+                    <div id="search-loading" class="py-12 text-center text-xs text-gray-500 italic">
+                        searching across users, reviews, and comments...
+                    </div>
+                    <div id="search-results-container" class="space-y-4 hidden"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const DEFAULT_PFP = "https://firebasestorage.googleapis.com/v0/b/testing-interme.firebasestorage.app/o/default.png?alt=media&token=449044bb-5706-4251-aa7d-fc3da295e5f3";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCywBwxsMjVWcI17BEyUUHXsKkaIq34VeM",
+            authDomain: "testing-interme.firebaseapp.com",
+            projectId: "testing-interme",
+            storageBucket: "testing-interme.firebasestorage.app",
+            messagingSenderId: "267474615661",
+            appId: "1:267474615661:web:efcd2aa5a7b91017936e64",
+            measurementId: "G-BL9G4PD8Z7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aniscope';
+
+        // Check session state
+        const savedSession = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+        if (savedSession && savedSession.username) {
+            const headerStatus = document.getElementById('user-header-status');
+            if (headerStatus) {
+                headerStatus.innerHTML = `
+                    <span>welcome, <a href="profile.html" class="hover:underline text-gray-900 font-bold">${savedSession.username}</a>!</span>
+                `;
+            }
+        }
+
+        // Global search redirect helper
+        window.handleGlobalSearch = function(event) {
+            event.preventDefault();
+            const q = document.getElementById('global-search-input').value.trim();
+            if (q) {
+                window.location.href = `search.html?query=${encodeURIComponent(q)}`;
+            }
+        };
+
+        // Extract query from URL path or params
+        function getQueryParam() {
+            const params = new URLSearchParams(window.location.search);
+            let q = params.get('query');
+            if (!q) {
+                const pathParts = window.location.pathname.split('/').filter(Boolean);
+                const searchIdx = pathParts.findIndex(p => p.startsWith('search='));
+                if (searchIdx !== -1) {
+                    q = decodeURIComponent(pathParts[searchIdx].replace('search=', ''));
+                } else {
+                    const lastPart = pathParts[pathParts.length - 1];
+                    if (lastPart && lastPart.startsWith('search=')) {
+                        q = decodeURIComponent(lastPart.replace('search=', ''));
+                    }
+                }
+            }
+            return q ? q.trim() : '';
+        }
+
+        let currentTab = 'all';
+        let cachedResults = { users: [], reviews: [], comments: [] };
+        let searchQuery = getQueryParam();
+
+        window.switchTab = function(tab) {
+            currentTab = tab;
+            ['all', 'users', 'reviews', 'comments'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tab) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            renderResults();
+        };
+
+        async function performSearch() {
+            if (!searchQuery) {
+                document.getElementById('search-heading').innerText = 'search results for: (empty)';
+                document.getElementById('search-loading').innerText = 'please enter a search term.';
+                document.getElementById('search-count-summary').innerText = '0 results found';
+                return;
+            }
+
+            document.getElementById('search-heading').innerText = `search results for: "${searchQuery}"`;
+            document.getElementById('page-title').innerText = `aniscope: Search - ${searchQuery}`;
+            document.getElementById('global-search-input').value = searchQuery;
+
+            const qLower = searchQuery.toLowerCase();
+
+            try {
+                // Fetch users
+                const usersSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
+                const matchedUsers = [];
+                usersSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (
+                        (data.username && data.username.toLowerCase().includes(qLower)) ||
+                        (data.meText && data.meText.toLowerCase().includes(qLower)) ||
+                        (data.location && data.location.toLowerCase().includes(qLower))
+                    ) {
+                        matchedUsers.push(data);
+                    }
+                });
+
+                // Fetch reviews and comments (scanned across user subcollections or top-level collections if present)
+                let matchedReviews = [];
+                let matchedComments = [];
+
+                // We can also query any review/comment collections stored under users or general data
+                for (const userDoc of usersSnap.docs) {
+                    const username = userDoc.id;
+                    try {
+                        const reviewsSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users', username, 'reviews'));
+                        reviewsSnap.forEach(revSnap => {
+                            const rev = revSnap.data();
+                            if (
+                                (rev.title && rev.title.toLowerCase().includes(qLower)) ||
+                                (rev.content && rev.content.toLowerCase().includes(qLower)) ||
+                                (rev.animeTitle && rev.animeTitle.toLowerCase().includes(qLower))
+                            ) {
+                                matchedReviews.push({ ...rev, username });
+                            }
+                        });
+                    } catch (e) {}
+
+                    try {
+                        const commentsSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users', username, 'comments'));
+                        commentsSnap.forEach(commSnap => {
+                            const comm = commSnap.data();
+                            if (comm.content && comm.content.toLowerCase().includes(qLower)) {
+                                matchedComments.push({ ...comm, username });
+                            }
+                        });
+                    } catch (e) {}
+                }
+
+                cachedResults = { users: matchedUsers, reviews: matchedReviews, comments: matchedComments };
+                document.getElementById('search-loading').classList.add('hidden');
+                document.getElementById('search-results-container').classList.remove('hidden');
+                renderResults();
+
+            } catch (err) {
+                console.error("Search error:", err);
+                document.getElementById('search-loading').innerText = 'error performing search. please try again.';
+            }
+        }
+
+        function renderResults() {
+            const container = document.getElementById('search-results-container');
+            container.innerHTML = '';
+
+            let listToRender = [];
+            if (currentTab === 'all') {
+                listToRender = [
+                    ...cachedResults.users.map(u => ({ type: 'user', data: u })),
+                    ...cachedResults.reviews.map(r => ({ type: 'review', data: r })),
+                    ...cachedResults.comments.map(c => ({ type: 'comment', data: c }))
+                ];
+            } else if (currentTab === 'users') {
+                listToRender = cachedResults.users.map(u => ({ type: 'user', data: u }));
+            } else if (currentTab === 'reviews') {
+                listToRender = cachedResults.reviews.map(r => ({ type: 'review', data: r }));
+            } else if (currentTab === 'comments') {
+                listToRender = cachedResults.comments.map(c => ({ type: 'comment', data: c }));
+            }
+
+            const totalCount = cachedResults.users.length + cachedResults.reviews.length + cachedResults.comments.length;
+            document.getElementById('search-count-summary').innerText = `${totalCount} result(s) found`;
+
+            if (listToRender.length === 0) {
+                container.innerHTML = `<div class="py-12 text-center text-xs text-gray-500 italic">no matching results found for "${searchQuery}".</div>`;
+                return;
+            }
+
+            listToRender.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "bg-white border border-gray-300 p-3 flex flex-col space-y-1";
+
+                if (item.type === 'user') {
+                    const u = item.data;
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <img src="${u.pfp || DEFAULT_PFP}" alt="${u.username}" class="w-10 h-10 object-cover border border-gray-400" />
+                            <div>
+                                <a href="${u.username}" class="text-xs font-bold text-blue-600 hover:underline">${u.username}</a>
+                                <p class="text-[11px] text-gray-600">${u.location ? 'location: ' + u.location : 'user profile'}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-700 italic mt-1 line-clamp-2">${u.meText || 'no about me provided.'}</p>
+                    `;
+                } else if (item.type === 'review') {
+                    const r = item.data;
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] bg-gray-200 px-1.5 py-0.5 font-bold uppercase text-gray-700">review</span>
+                            <span class="text-[11px] text-gray-500">by <a href="${r.username}" class="hover:underline text-gray-800 font-bold">${r.username}</a></span>
+                        </div>
+                        <h2 class="text-xs font-bold text-gray-900">${r.title || r.animeTitle || 'Anime Review'}</h2>
+                        <p class="text-xs text-gray-700 line-clamp-2">${r.content || ''}</p>
+                    `;
+                } else if (item.type === 'comment') {
+                    const c = item.data;
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] bg-gray-200 px-1.5 py-0.5 font-bold uppercase text-gray-700">comment</span>
+                            <span class="text-[11px] text-gray-500">by <a href="${c.username}" class="hover:underline text-gray-800 font-bold">${c.username}</a></span>
+                        </div>
+                        <p class="text-xs text-gray-700 line-clamp-2">${c.content || ''}</p>
+                    `;
+                }
+
+                container.appendChild(itemDiv);
+            });
+        }
+
+        performSearch();
+    </script>
+</body>
+</html>
