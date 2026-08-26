@@ -39,18 +39,10 @@
             background-color: #f7f7f7;
             border: 1px solid #d0d0d0;
         }
-        .section-header {
-            background-color: #e2e2e2;
-            border-bottom: 1px solid #ccc;
-        }
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.4);
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-0 px-0 md:px-4">
     <div class="w-full max-w-[980px] bg-white min-h-screen shadow-sm flex flex-col">
-        
         <div class="pt-1 pb-0 px-4">
             <div class="flex items-end justify-between">
                 <a href="index.html" class="block">
@@ -86,137 +78,54 @@
                 </a>
             </nav>
 
-            <div class="flex items-center space-x-1 py-0.5">
+            <form id="global-search-form" onsubmit="handleGlobalSearch(event)" class="flex items-center space-x-1 py-0.5">
                 <div class="relative flex items-center">
                     <svg class="w-3.5 h-3.5 absolute left-2 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" placeholder="Search" class="pl-7 pr-2 py-0.5 text-xs bg-white border border-gray-300 rounded-none w-44 focus:outline-none focus:border-gray-500" />
+                    <input type="text" id="global-search-input" placeholder="Search" class="square-input pl-7 pr-2 py-0.5 text-xs bg-white border border-gray-300 w-44 focus:outline-none focus:border-gray-500" />
                 </div>
-                <button type="button" class="focus:outline-none flex items-center">
+                <button type="submit" class="focus:outline-none flex items-center cursor-pointer">
                     <img src="go.png" alt="GO" class="h-6 w-auto block" onerror="this.onerror=null; this.src='https://placehold.co/32x24/cc0000/ffffff?text=GO';" />
                 </button>
-            </div>
+            </form>
         </div>
 
         <main class="flex-1 bg-white p-6 md:p-8">
-            <div id="profile-container" class="max-w-4xl mx-auto flex flex-col space-y-6">
-                
-                <div class="profile-box p-4 flex flex-col sm:flex-row items-center sm:items-start justify-between space-y-4 sm:space-y-0 sm:space-x-6">
-                    <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 w-full">
-                        <div class="w-28 h-28 border border-gray-400 bg-gray-200 overflow-hidden flex-shrink-0">
-                            <img id="profile-pfp" src="https://firebasestorage.googleapis.com/v0/b/testing-interme.firebasestorage.app/o/default.png?alt=media&token=449044bb-5706-4251-aa7d-fc3da295e5f3" alt="Profile Picture" class="w-full h-full object-cover" />
-                        </div>
-                        <div class="flex-1 flex flex-col space-y-1.5 text-center sm:text-left">
-                            <h1 id="profile-username" class="text-xl font-bold text-gray-900 leading-none">loading...</h1>
-                            <p id="profile-joined" class="text-xs text-gray-500 font-semibold">joined: --</p>
-                            
-                            <div class="text-xs text-gray-700 pt-1 space-y-1">
-                                <div id="profile-link-container">
-                                    <span class="font-bold">website:</span> <span id="profile-link" class="text-gray-500">none</span>
-                                </div>
+            <div class="max-w-4xl mx-auto flex flex-col space-y-6">
+                <div id="profile-loading" class="py-12 text-center text-xs text-gray-500 italic">loading profile...</div>
+                <div id="profile-content" class="hidden flex flex-col space-y-6">
+                    <div class="profile-box p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4">
+                            <img id="profile-pfp" src="" alt="avatar" class="w-20 h-20 object-cover border border-gray-400" />
+                            <div>
+                                <h1 id="profile-username" class="text-lg font-bold text-gray-900"></h1>
+                                <p id="profile-joined" class="text-xs text-gray-500 mt-0.5"></p>
+                                <p id="profile-location" class="text-xs text-gray-600 mt-1"></p>
                             </div>
                         </div>
+                        <div id="profile-actions" class="flex items-center space-x-2"></div>
                     </div>
 
-                    <div id="profile-right-action" class="flex-shrink-0 self-start w-full sm:w-auto text-center sm:text-right">
-                        <button id="settings-btn" onclick="openSettingsModal()" class="hidden btn-square px-3 py-1 bg-black text-white text-xs font-bold hover:bg-gray-800">
-                            settings
-                        </button>
-                        <div id="profile-location-display" class="hidden text-xs text-gray-700">
-                            <span class="font-bold">location:</span> <span id="profile-location-text" class="text-gray-600">unspecified</span>
-                        </div>
+                    <div class="bg-white border border-gray-300 p-6 flex flex-col space-y-2">
+                        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-1">about me</h2>
+                        <p id="profile-metext" class="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed"></p>
+                    </div>
+
+                    <div class="bg-white border border-gray-300 p-6 flex flex-col space-y-4">
+                        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-1">friends list</h2>
+                        <div id="friends-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
                     </div>
                 </div>
-
-                <div class="profile-box overflow-hidden">
-                    <div class="section-header px-4 py-2 flex items-center justify-between">
-                        <h2 class="text-xs font-bold text-gray-800 uppercase tracking-wider">me!</h2>
-                    </div>
-                    <div class="p-4 bg-white">
-                        <p id="profile-me-text" class="text-xs text-gray-700 leading-relaxed italic">
-                            this person is probably too busy reading reviews to change their about me section. ask them to!
-                        </p>
-                    </div>
-                </div>
-
-                <div class="profile-box overflow-hidden">
-                    <div class="section-header px-4 py-2">
-                        <h2 class="text-xs font-bold text-gray-800 uppercase tracking-wider">reviews</h2>
-                    </div>
-                    <div class="p-4 bg-white text-xs text-gray-500 italic">
-                        no reviews written yet.
-                    </div>
-                </div>
-
-                <div class="profile-box overflow-hidden">
-                    <div class="section-header px-4 py-2">
-                        <h2 class="text-xs font-bold text-gray-800 uppercase tracking-wider">comments</h2>
-                    </div>
-                    <div class="p-4 bg-white text-xs text-gray-500 italic">
-                        no comments left yet.
-                    </div>
-                </div>
-
             </div>
         </main>
     </div>
 
-    <div id="settings-modal" class="fixed inset-0 modal-overlay hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-[#f7f7f7] border border-gray-400 w-full max-w-md p-5 shadow-none relative">
-            <div class="flex items-center justify-between border-b border-gray-300 pb-2 mb-4">
-                <h3 class="text-sm font-bold text-gray-900 uppercase">account settings</h3>
-                <button onclick="closeSettingsModal()" class="text-xs font-bold text-gray-600 hover:text-black">✕ close</button>
-            </div>
-
-            <div id="settings-status-msg" class="text-xs p-2 mb-3 hidden border"></div>
-
-            <form id="settings-form" onsubmit="handleSettingsSave(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">username</label>
-                    <input type="text" id="setting-username" class="square-input w-full px-2 py-1 text-xs bg-white border border-gray-400 focus:outline-none focus:border-black" />
-                    <p id="username-note" class="text-[10px] text-gray-500 mt-0.5">can only be changed once every 24 hours.</p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">location</label>
-                    <input type="text" id="setting-location" placeholder="e.g. Tokyo, Japan" class="square-input w-full px-2 py-1 text-xs bg-white border border-gray-400 focus:outline-none focus:border-black" />
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">custom link</label>
-                    <input type="url" id="setting-link" placeholder="https://example.com" class="square-input w-full px-2 py-1 text-xs bg-white border border-gray-400 focus:outline-none focus:border-black" />
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">profile picture</label>
-                    <input type="file" id="setting-pfp-file" accept="image/*" class="square-input w-full text-xs bg-white border border-gray-400 p-1" />
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">me! section</label>
-                    <textarea id="setting-me" rows="3" placeholder="write something about yourself..." class="square-input w-full px-2 py-1 text-xs bg-white border border-gray-400 focus:outline-none focus:border-black resize-none"></textarea>
-                </div>
-
-                <div class="pt-2 flex items-center justify-between border-t border-gray-300">
-                    <button type="button" onclick="handleLogout()" class="btn-square px-3 py-1.5 text-xs font-bold text-white bg-red-700 hover:bg-red-800">
-                        logout
-                    </button>
-                    <button type="submit" id="save-settings-btn" class="btn-square px-4 py-1.5 text-xs font-bold text-white bg-black">
-                        save changes
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const DEFAULT_PFP = "https://firebasestorage.googleapis.com/v0/b/testing-interme.firebasestorage.app/o/default.png?alt=media&token=449044bb-5706-4251-aa7d-fc3da295e5f3";
-        const DEFAULT_ME_TEXT = "this person is probably too busy reading reviews to change their about me section. ask them to!";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCywBwxsMjVWcI17BEyUUHXsKkaIq34VeM",
@@ -230,216 +139,146 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const storage = getStorage(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aniscope';
 
-        let loggedInSession = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
-        let profileUserData = null;
-        let isOwnProfile = false;
-        let viewedUsername = "";
-
-        const urlParams = new URLSearchParams(window.location.search);
-        let requestedUser = urlParams.get('u');
-
-        if (!requestedUser) {
-            const pathParts = window.location.pathname.split('/').filter(Boolean);
-            if (pathParts.length === 1) {
-                const reservedPaths = ['profile', 'profile.html', 'index', 'index.html', 'login', 'login.html', 'signup', 'signup.html'];
-                if (!reservedPaths.includes(pathParts[0].toLowerCase())) {
-                    requestedUser = pathParts[0];
-                }
-            }
-        }
-
-        if (loggedInSession && loggedInSession.username) {
+        const savedSession = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+        if (savedSession && savedSession.username) {
             const headerStatus = document.getElementById('user-header-status');
             if (headerStatus) {
                 headerStatus.innerHTML = `
-                    <span>welcome, <a href="profile.html" class="hover:underline text-gray-900 font-bold">${loggedInSession.username}</a>!</span>
+                    <span>welcome, <a href="profile.html?u=${encodeURIComponent(savedSession.username)}" class="hover:underline text-gray-900 font-bold">${savedSession.username}</a>!</span>
                 `;
             }
         }
 
-        if (requestedUser) {
-            viewedUsername = requestedUser.trim();
-        } else if (loggedInSession && loggedInSession.username) {
-            viewedUsername = loggedInSession.username;
-        }
+        window.handleGlobalSearch = function(event) {
+            event.preventDefault();
+            const q = document.getElementById('global-search-input').value.trim();
+            if (q) {
+                window.location.href = `search.html?query=${encodeURIComponent(q)}`;
+            }
+        };
 
-        if (loggedInSession && loggedInSession.username && viewedUsername.toLowerCase() === loggedInSession.username.toLowerCase()) {
-            isOwnProfile = true;
+        function getProfileUser() {
+            const params = new URLSearchParams(window.location.search);
+            let u = params.get('u');
+            if (!u && savedSession && savedSession.username) {
+                u = savedSession.username;
+            }
+            return u ? u.trim().toLowerCase() : null;
         }
 
         async function loadProfile() {
-            if (!viewedUsername) {
-                window.location.href = 'login.html';
+            const targetUsername = getProfileUser();
+            const loadingEl = document.getElementById('profile-loading');
+            const contentEl = document.getElementById('profile-content');
+
+            if (!targetUsername) {
+                loadingEl.innerText = "no user specified or not logged in.";
                 return;
             }
 
             try {
-                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', viewedUsername.toLowerCase());
+                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', targetUsername);
                 const userSnap = await getDoc(userDocRef);
 
                 if (!userSnap.exists()) {
-                    document.getElementById('profile-username').innerText = "user not found";
-                    document.getElementById('profile-joined').innerText = "";
-                    document.getElementById('profile-me-text').innerText = "this user profile does not exist.";
-                    document.getElementById('page-title').innerText = "aniscope: User Not Found";
+                    loadingEl.innerText = `user "${targetUsername}" not found.`;
                     return;
                 }
 
-                profileUserData = userSnap.data();
+                const userData = userSnap.data();
+                document.getElementById('page-title').innerText = `aniscope: ${userData.username}`;
+                document.getElementById('profile-pfp').src = userData.pfp || DEFAULT_PFP;
+                document.getElementById('profile-username').innerText = userData.username;
+                document.getElementById('profile-joined').innerText = `joined: ${userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'unknown'}`;
+                document.getElementById('profile-location').innerText = userData.location ? `location: ${userData.location}` : '';
+                document.getElementById('profile-metext').innerText = userData.meText || 'no about me provided.';
 
-                document.getElementById('profile-username').innerText = profileUserData.username;
-                document.getElementById('page-title').innerText = `aniscope: ${profileUserData.username}`;
-                
-                if (profileUserData.createdAt) {
-                    const joinedDate = new Date(profileUserData.createdAt);
-                    document.getElementById('profile-joined').innerText = "joined: " + joinedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                } else {
-                    document.getElementById('profile-joined').innerText = "joined: recently";
+                // Render actions (add friend / pending / remove friend)
+                const actionsEl = document.getElementById('profile-actions');
+                actionsEl.innerHTML = '';
+
+                if (savedSession && savedSession.username.toLowerCase() === targetUsername) {
+                    actionsEl.innerHTML = `<a href="settings.html" class="btn-square px-4 py-2 text-xs font-bold bg-black text-white hover:bg-gray-800">edit profile</a>`;
+                } else if (savedSession) {
+                    const currentUserKey = savedSession.username.toLowerCase();
+                    const friends = userData.friends || [];
+                    const friendRequests = userData.friendRequests || [];
+
+                    const isFriend = friends.includes(currentUserKey);
+                    const hasRequested = friendRequests.includes(currentUserKey);
+
+                    if (isFriend) {
+                        actionsEl.innerHTML = `<button onclick="handleRemoveFriend('${targetUsername}')" class="btn-square px-4 py-2 text-xs font-bold bg-gray-300 text-gray-800 hover:bg-gray-400">remove friend</button>`;
+                    } else if (hasRequested) {
+                        actionsEl.innerHTML = `<button disabled class="btn-square px-4 py-2 text-xs font-bold bg-gray-200 text-gray-500 cursor-not-allowed">friend request pending</button>`;
+                    } else {
+                        actionsEl.innerHTML = `<button onclick="handleSendFriendRequest('${targetUsername}')" class="btn-square px-4 py-2 text-xs font-bold bg-black text-white hover:bg-gray-800">add friend</button>`;
+                    }
                 }
 
-                document.getElementById('profile-pfp').src = profileUserData.pfp || DEFAULT_PFP;
+                // Render friends
+                const friendsContainer = document.getElementById('friends-container');
+                friendsContainer.innerHTML = '';
+                const friendList = userData.friends || [];
 
-                const linkElement = document.getElementById('profile-link');
-                if (profileUserData.customLink && profileUserData.customLink.trim() !== '') {
-                    linkElement.innerHTML = `<a href="${profileUserData.customLink}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">${profileUserData.customLink}</a>`;
+                if (friendList.length === 0) {
+                    friendsContainer.innerHTML = `<p class="text-xs text-gray-500 italic col-span-full">no friends added yet.</p>`;
                 } else {
-                    linkElement.innerText = "none";
+                    for (const fName of friendList) {
+                        try {
+                            const fSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', fName));
+                            const fData = fSnap.exists() ? fSnap.data() : { username: fName, pfp: DEFAULT_PFP };
+                            const fCard = document.createElement('a');
+                            fCard.href = `profile.html?u=${encodeURIComponent(fData.username)}`;
+                            fCard.className = "flex items-center space-x-2 p-2 border border-gray-300 bg-[#f9f9f9] hover:bg-gray-100";
+                            fCard.innerHTML = `
+                                <img src="${fData.pfp || DEFAULT_PFP}" alt="${fData.username}" class="w-8 h-8 object-cover border border-gray-400" />
+                                <span class="text-xs font-bold text-blue-600 truncate">${fData.username}</span>
+                            `;
+                            friendsContainer.appendChild(fCard);
+                        } catch (e) {}
+                    }
                 }
 
-                const meText = (profileUserData.meText && profileUserData.meText.trim() !== '') ? profileUserData.meText : DEFAULT_ME_TEXT;
-                document.getElementById('profile-me-text').innerText = meText;
-
-                if (isOwnProfile) {
-                    document.getElementById('settings-btn').classList.remove('hidden');
-                    document.getElementById('profile-location-display').classList.add('hidden');
-                } else {
-                    document.getElementById('settings-btn').classList.add('hidden');
-                    document.getElementById('profile-location-display').classList.remove('hidden');
-                    document.getElementById('profile-location-text').innerText = profileUserData.location && profileUserData.location.trim() !== '' ? profileUserData.location : "unspecified";
-                }
+                loadingEl.classList.add('hidden');
+                contentEl.classList.remove('hidden');
 
             } catch (err) {
-                document.getElementById('profile-username').innerText = "error loading profile";
+                console.error("Error loading profile:", err);
+                loadingEl.innerText = "error loading profile.";
             }
         }
 
-        window.openSettingsModal = function() {
-            if (!isOwnProfile || !profileUserData) return;
-
-            document.getElementById('setting-username').value = profileUserData.username || '';
-            document.getElementById('setting-location').value = profileUserData.location || '';
-            document.getElementById('setting-link').value = profileUserData.customLink || '';
-            document.getElementById('setting-me').value = profileUserData.meText || '';
-            
-            const statusMsg = document.getElementById('settings-status-msg');
-            statusMsg.classList.add('hidden');
-
-            document.getElementById('settings-modal').classList.remove('hidden');
-        };
-
-        window.closeSettingsModal = function() {
-            document.getElementById('settings-modal').classList.add('hidden');
-        };
-
-        window.handleSettingsSave = async function(event) {
-            event.preventDefault();
-
-            const statusMsg = document.getElementById('settings-status-msg');
-            const saveBtn = document.getElementById('save-settings-btn');
-            statusMsg.classList.add('hidden');
-            statusMsg.className = "text-xs p-2 mb-3 border";
-
-            saveBtn.disabled = true;
-            saveBtn.innerText = "saving...";
-
-            const newUsername = document.getElementById('setting-username').value.trim();
-            const newLocation = document.getElementById('setting-location').value.trim();
-            const newLink = document.getElementById('setting-link').value.trim();
-            const newMe = document.getElementById('setting-me').value.trim();
-            const fileInput = document.getElementById('setting-pfp-file');
-
-            const currentUsername = profileUserData.username;
-            let updatedPfpUrl = profileUserData.pfp || DEFAULT_PFP;
-            let usernameChanged = false;
-            let lastChangeDate = profileUserData.lastUsernameChange ? new Date(profileUserData.lastUsernameChange) : null;
-            const now = new Date();
-
+        window.handleSendFriendRequest = async function(targetUser) {
+            if (!savedSession) return;
             try {
-                if (newUsername !== currentUsername) {
-                    const userRegex = /^[a-zA-Z0-9_]{3,20}$/;
-                    if (!userRegex.test(newUsername)) {
-                        throw new Error("username can only contain letters, numbers, and underscores (3-20 chars).");
-                    }
-
-                    if (lastChangeDate && (now - lastChangeDate) < (24 * 60 * 60 * 1000)) {
-                        const remainingHours = Math.ceil((24 * 60 * 60 * 1000 - (now - lastChangeDate)) / (1000 * 60 * 60));
-                        throw new Error(`you can only change your username once every 24 hours. try again in ~${remainingHours} hour(s).`);
-                    }
-
-                    const targetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', newUsername.toLowerCase());
-                    const targetSnap = await getDoc(targetDocRef);
-
-                    if (targetSnap.exists()) {
-                        throw new Error("that username is already taken.");
-                    }
-
-                    usernameChanged = true;
-                }
-
-                if (fileInput.files && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    const storageRef = ref(storage, 'pfp/' + currentUsername.toLowerCase() + '_' + Date.now());
-                    await uploadBytes(storageRef, file);
-                    updatedPfpUrl = await getDownloadURL(storageRef);
-                }
-
-                const updatedData = {
-                    ...profileUserData,
-                    username: newUsername,
-                    location: newLocation,
-                    customLink: newLink,
-                    meText: newMe,
-                    pfp: updatedPfpUrl,
-                    ...(usernameChanged ? { lastUsernameChange: now.toISOString() } : {})
-                };
-
-                if (usernameChanged) {
-                    const newDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', newUsername.toLowerCase());
-                    const oldDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUsername.toLowerCase());
-
-                    await setDoc(newDocRef, updatedData);
-                    await deleteDoc(oldDocRef);
-                } else {
-                    const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUsername.toLowerCase());
-                    await setDoc(userDocRef, updatedData);
-                }
-
-                localStorage.setItem('aniscope_session', JSON.stringify({
-                    username: newUsername,
-                    email: profileUserData.email,
-                    pfp: updatedPfpUrl,
-                    createdAt: profileUserData.createdAt
-                }));
-
-                closeSettingsModal();
-                window.location.href = `/${encodeURIComponent(newUsername)}`;
-
+                const targetRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', targetUser);
+                await updateDoc(targetRef, {
+                    friendRequests: arrayUnion(savedSession.username.toLowerCase())
+                });
+                alert("Friend request sent successfully!");
+                loadProfile();
             } catch (err) {
-                statusMsg.innerText = err.message || "failed to save settings. try again.";
-                statusMsg.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
-                statusMsg.classList.remove('hidden');
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerText = "save changes";
+                console.error("Error sending friend request:", err);
             }
         };
 
-        window.handleLogout = function() {
-            localStorage.removeItem('aniscope_session');
-            window.location.href = 'index.html';
+        window.handleRemoveFriend = async function(targetUser) {
+            if (!savedSession) return;
+            try {
+                const currentUserKey = savedSession.username.toLowerCase();
+                const targetRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', targetUser);
+                const currentRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUserKey);
+
+                await updateDoc(targetRef, { friends: arrayRemove(currentUserKey) });
+                await updateDoc(currentRef, { friends: arrayRemove(targetUser) });
+
+                loadProfile();
+            } catch (err) {
+                console.error("Error removing friend:", err);
+            }
         };
 
         loadProfile();
