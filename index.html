@@ -96,18 +96,13 @@
             const savedSession = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
             if (savedSession && savedSession.username) {
                 const headerStatus = document.getElementById('user-header-status');
-                headerStatus.innerHTML = `
-                    <span class="text-gray-900 font-bold">welcome, ${savedSession.username}!</span>
-                    <span>|</span>
-                    <button onclick="handleLogout()" class="hover:underline focus:outline-none">logout</button>
-                `;
+                if (headerStatus) {
+                    headerStatus.innerHTML = `
+                        <span>welcome, <a href="profile.html" class="hover:underline text-gray-900 font-bold">${savedSession.username}</a>!</span>
+                    `;
+                }
             }
         })();
-
-        function handleLogout() {
-            localStorage.removeItem('aniscope_session');
-            window.location.reload();
-        }
     </script>
 </body>
 </html>
