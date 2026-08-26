@@ -204,6 +204,15 @@
             currentTab = tab;
             ['all', 'users', 'reviews', 'comments'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
+                if (t === tab) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            renderResults();
+        };
+
         // Global search redirect helper
         window.handleGlobalSearch = function(event) {
             event.preventDefault();
@@ -318,32 +327,38 @@
 
                 if (item.type === 'user') {
                     const u = item.data;
+                    const profileUrl = `profile.html?u=${encodeURIComponent(u.username)}`;
                     itemDiv.innerHTML = `
-                        <div class="flex items-center space-x-3">
-                            <img src="${u.pfp || DEFAULT_PFP}" alt="${u.username}" class="w-10 h-10 object-cover border border-gray-400" />
-                            <div>
-                                <a href="${u.username}" class="text-xs font-bold text-blue-600 hover:underline">${u.username}</a>
-                                <p class="text-[11px] text-gray-600">${u.location ? 'location: ' + u.location : 'user profile'}</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <img src="${u.pfp || DEFAULT_PFP}" alt="${u.username}" class="w-10 h-10 object-cover border border-gray-400" />
+                                <div>
+                                    <a href="${profileUrl}" class="text-xs font-bold text-blue-600 hover:underline">${u.username}</a>
+                                    <p class="text-[11px] text-gray-600">${u.location ? 'location: ' + u.location : 'user profile'}</p>
+                                </div>
                             </div>
+                            <a href="${profileUrl}" class="btn-square px-3 py-1 text-[11px] font-bold bg-black text-white hover:bg-gray-800">view profile</a>
                         </div>
                         <p class="text-xs text-gray-700 italic mt-1 line-clamp-2">${u.meText || 'no about me provided.'}</p>
                     `;
                 } else if (item.type === 'review') {
                     const r = item.data;
+                    const profileUrl = `profile.html?u=${encodeURIComponent(r.username)}`;
                     itemDiv.innerHTML = `
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] bg-gray-200 px-1.5 py-0.5 font-bold uppercase text-gray-700">review</span>
-                            <span class="text-[11px] text-gray-500">by <a href="${r.username}" class="hover:underline text-gray-800 font-bold">${r.username}</a></span>
+                            <span class="text-[11px] text-gray-500">by <a href="${profileUrl}" class="hover:underline text-gray-800 font-bold">${r.username}</a></span>
                         </div>
                         <h2 class="text-xs font-bold text-gray-900">${r.title || r.animeTitle || 'Anime Review'}</h2>
                         <p class="text-xs text-gray-700 line-clamp-2">${r.content || ''}</p>
                     `;
                 } else if (item.type === 'comment') {
                     const c = item.data;
+                    const profileUrl = `profile.html?u=${encodeURIComponent(c.username)}`;
                     itemDiv.innerHTML = `
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] bg-gray-200 px-1.5 py-0.5 font-bold uppercase text-gray-700">comment</span>
-                            <span class="text-[11px] text-gray-500">by <a href="${c.username}" class="hover:underline text-gray-800 font-bold">${c.username}</a></span>
+                            <span class="text-[11px] text-gray-500">by <a href="${profileUrl}" class="hover:underline text-gray-800 font-bold">${c.username}</a></span>
                         </div>
                         <p class="text-xs text-gray-700 line-clamp-2">${c.content || ''}</p>
                     `;
