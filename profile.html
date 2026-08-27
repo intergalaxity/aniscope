@@ -11,34 +11,67 @@
             font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
             background-color: #d8d8d8;
         }
-        .nav-border {
-            border-top: 1px solid #ccc;
-            border-bottom: 1px solid #ccc;
+        .nav-border { border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+        .nav-tab { border-right: 1px dotted #a3a3a3; transition: none !important; }
+        .nav-tab:first-child { border-left: 1px dotted #a3a3a3; }
+        .nav-tab:hover { background-color: #4a4a4a; }
+        .nav-tab:hover .tab-img { filter: invert(100%); }
+        .btn-square { border-radius: 0px !important; transition: none !important; }
+        .square-input { border-radius: 0px !important; }
+
+        .box { border: 1px solid #999; background: #fff; }
+        .box-header {
+            background-color: #6b6b6b;
+            color: #fff;
+            font-weight: bold;
+            font-size: 13px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .nav-tab {
-            border-right: 1px dotted #a3a3a3;
-            transition: none !important;
+        .box-body { padding: 14px; background: #ececec; }
+        .box-body.white { background: #fff; }
+        .btn-follow {
+            background-color: #f0921e;
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 5px 14px;
+            border: 1px solid #c97814;
+            cursor: pointer;
         }
-        .nav-tab:first-child {
-            border-left: 1px dotted #a3a3a3;
+        .btn-follow:hover { background-color: #d97e12; }
+        .btn-follow.following { background-color: #6b6b6b; border-color: #4a4a4a; }
+        .btn-follow.following:hover { background-color: #565656; }
+        .connect-link {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; color: #1d4ed8; font-weight: 600;
+            padding: 6px 4px; cursor: pointer;
         }
-        .nav-tab:hover {
-            background-color: #4a4a4a;
+        .connect-link:hover { text-decoration: underline; }
+        .connect-link img { width: 24px; height: 18px; object-fit: contain; }
+        .tile {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; text-decoration: none;
         }
-        .nav-tab:hover .tab-img {
-            filter: invert(100%);
+        .tile img { width: 56px; height: 56px; object-fit: cover; border: 1px solid #999; background: #fff; }
+        .tile span { font-size: 11px; font-weight: bold; color: #4338ca; margin-top: 3px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .toolbar-btn {
+            border: 1px solid #999; background: #f2f2f2; font-size: 11px; font-weight: bold;
+            padding: 3px 7px; cursor: pointer;
         }
-        .btn-square {
-            border-radius: 0px !important;
-            transition: none !important;
+        .toolbar-btn:hover { background: #e2e2e2; }
+        .about-editor {
+            min-height: 120px; border: 1px solid #999; background: #fff; padding: 8px;
+            font-size: 13px; outline: none;
         }
-        .square-input {
-            border-radius: 0px !important;
+        .pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #fff; border: 1px solid #ccc; font-size: 11px; font-weight: 600;
+            padding: 4px 8px; color: #333;
         }
-        .profile-box {
-            background-color: #f7f7f7;
-            border: 1px solid #d0d0d0;
-        }
+        .pill button { color: #b91c1c; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-0 px-0 md:px-4">
@@ -77,7 +110,6 @@
                     <img src="about.png" alt="about" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/60x28/f2f2f2/111111?text=about';" />
                 </a>
             </nav>
-
             <form id="global-search-form" onsubmit="handleGlobalSearch(event)" class="flex items-center space-x-1 py-0.5">
                 <div class="relative flex items-center">
                     <svg class="w-3.5 h-3.5 absolute left-2 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,31 +123,178 @@
             </form>
         </div>
 
-        <main class="flex-1 bg-white p-6 md:p-8">
-            <div class="max-w-4xl mx-auto flex flex-col space-y-6">
-                <div id="profile-loading" class="py-12 text-center text-xs text-gray-500 italic">loading profile...</div>
-                <div id="profile-content" class="hidden flex flex-col space-y-6">
-                    <div class="profile-box p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        <div class="flex items-center space-x-4">
-                            <img id="profile-pfp" src="" alt="avatar" class="w-20 h-20 object-cover border border-gray-400" />
-                            <div>
-                                <h1 id="profile-username" class="text-lg font-bold text-gray-900"></h1>
-                                <p id="profile-joined" class="text-xs text-gray-500 mt-0.5"></p>
-                                <p id="profile-location" class="text-xs text-gray-600 mt-1"></p>
+        <main class="flex-1 bg-white p-4 md:p-6">
+            <div id="profile-loading" class="py-16 text-center text-xs text-gray-500 italic">loading profile...</div>
+
+            <div id="profile-content" class="hidden grid grid-cols-1 md:grid-cols-[320px_1fr] gap-6 items-start">
+
+                <!-- LEFT COLUMN -->
+                <div class="flex flex-col gap-5">
+
+                    <!-- User card -->
+                    <div class="box">
+                        <div class="box-header">
+                            <span id="card-username"></span>
+                            <div id="card-action-slot"></div>
+                        </div>
+                        <div class="box-body flex gap-4">
+                            <img id="profile-pfp" src="" alt="avatar" class="w-20 h-20 object-cover border border-gray-500 bg-white flex-shrink-0" />
+                            <div class="text-xs text-gray-800 leading-relaxed">
+                                <p id="profile-joined" class="mb-1"></p>
+                                <p>Comments Made: <span id="stat-comments" class="font-bold">0</span></p>
+                                <p>Reviews Made: <span id="stat-reviews" class="font-bold">0</span></p>
+                                <p class="mt-2">Followers: <span id="stat-followers" class="font-bold">0</span></p>
+                                <p>Following: <span id="stat-following" class="font-bold">0</span></p>
+                                <p>Friends Added: <span id="stat-friends" class="font-bold">0</span></p>
+                                <p class="mt-2 break-all">Profile: <span id="profile-url-text" class="font-bold"></span></p>
                             </div>
                         </div>
-                        <div id="profile-actions" class="flex items-center space-x-2"></div>
+                        <div id="own-profile-editor" class="hidden box-body white border-t border-gray-300 flex-col gap-2">
+                            <label class="text-[11px] font-bold text-gray-700">Profile picture URL:</label>
+                            <input type="text" id="edit-pfp-input" class="square-input px-2 py-1 text-xs border border-gray-400" />
+                            <div class="flex gap-2 mt-1">
+                                <button onclick="handleSaveProfileBasic()" class="btn-square bg-black text-white text-xs font-bold px-3 py-1.5">Save</button>
+                                <button onclick="toggleEditPanel(false)" class="btn-square bg-gray-300 text-gray-800 text-xs font-bold px-3 py-1.5">Cancel</button>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bg-white border border-gray-300 p-6 flex flex-col space-y-2">
-                        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-1">about me</h2>
-                        <p id="profile-metext" class="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed"></p>
+                    <!-- Connect with -->
+                    <div id="connect-box" class="box hidden">
+                        <div class="box-header"><span id="connect-title">Connect</span></div>
+                        <div class="box-body white flex flex-col items-start">
+                            <div class="connect-link" onclick="focusCommentBox()">
+                                <img src="https://www.kamtape.com/img/icn_addcomment_over_24x18.gif" alt="" />
+                                <span>Add Comment</span>
+                            </div>
+                            <div class="connect-link" onclick="handleShareAccount()">
+                                <img src="https://www.kamtape.com/img/icn_fwdmember_over_24x18.gif" alt="" />
+                                <span>Share Account</span>
+                            </div>
+                            <div class="connect-link" onclick="handleBlockUser()">
+                                <img src="https://www.kamtape.com/img/icn_blockuser_over_24x18.gif" alt="" />
+                                <span>Block User</span>
+                            </div>
+                            <div class="connect-link" id="add-friend-link" onclick="handleAddFriend()">
+                                <img src="https://www.kamtape.com/img/icn_addfriends_over_24x18.gif" alt="" />
+                                <span id="add-friend-label">Add as Friend</span>
+                            </div>
+                            <div class="w-full border-t border-gray-200 mt-2 pt-2 text-center">
+                                <a id="connect-permalink" href="#" class="text-xs text-blue-700 hover:underline break-all"></a>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bg-white border border-gray-300 p-6 flex flex-col space-y-4">
-                        <h2 class="text-xs font-bold text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-1">friends list</h2>
-                        <div id="friends-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+                    <!-- Friends -->
+                    <div class="box">
+                        <div class="box-header"><span>Friends</span></div>
+                        <div class="box-body white">
+                            <div id="friends-grid" class="grid grid-cols-3 gap-3"></div>
+                            <p id="friends-empty" class="text-xs text-gray-500 italic hidden">no friends added yet.</p>
+                        </div>
                     </div>
+
+                    <!-- Followers -->
+                    <div class="box">
+                        <div class="box-header"><span>Followers</span></div>
+                        <div class="box-body white">
+                            <div id="followers-grid" class="grid grid-cols-3 gap-3"></div>
+                            <p id="followers-empty" class="text-xs text-gray-500 italic hidden">no followers yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Following -->
+                    <div class="box">
+                        <div class="box-header"><span>Following</span></div>
+                        <div class="box-body white">
+                            <div id="following-grid" class="grid grid-cols-3 gap-3"></div>
+                            <p id="following-empty" class="text-xs text-gray-500 italic hidden">not following anyone yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Scopelist -->
+                    <div class="box">
+                        <div class="box-header"><span>Scopelist (favorite anime)</span></div>
+                        <div class="box-body white flex flex-col gap-2">
+                            <div id="scopelist-items" class="flex flex-wrap gap-2"></div>
+                            <p id="scopelist-empty" class="text-xs text-gray-500 italic hidden">no anime added to scopelist yet.</p>
+                            <div id="scopelist-editor" class="hidden flex gap-2 mt-2">
+                                <input type="text" id="scopelist-input" placeholder="anime title" class="square-input flex-1 px-2 py-1 text-xs border border-gray-400" />
+                                <button onclick="handleAddScopelistItem()" class="btn-square bg-black text-white text-xs font-bold px-3 py-1">Add</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="flex flex-col gap-5">
+
+                    <!-- About me -->
+                    <div class="box">
+                        <div class="box-header">
+                            <span>About Me</span>
+                            <div id="about-edit-toggle" class="hidden"></div>
+                        </div>
+                        <div class="box-body white">
+                            <div id="about-toolbar" class="hidden flex flex-wrap gap-1.5 mb-2 pb-2 border-b border-gray-200">
+                                <button type="button" class="toolbar-btn" onclick="execFmt('bold')"><b>B</b></button>
+                                <button type="button" class="toolbar-btn" onclick="execFmt('italic')"><i>I</i></button>
+                                <button type="button" class="toolbar-btn" onclick="execFmt('underline')"><u>U</u></button>
+                                <select id="font-family-select" class="toolbar-btn" onchange="execFmt('fontName', this.value)">
+                                    <option value="">Font</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="'Courier New'">Courier New</option>
+                                    <option value="'Comic Sans MS'">Comic Sans</option>
+                                    <option value="'Lucida Sans'">Lucida Sans</option>
+                                </select>
+                                <select id="font-size-select" class="toolbar-btn" onchange="execFmt('fontSize', this.value)">
+                                    <option value="">Size</option>
+                                    <option value="1">Tiny</option>
+                                    <option value="3">Normal</option>
+                                    <option value="5">Large</option>
+                                    <option value="7">Huge</option>
+                                </select>
+                                <input type="color" id="font-color-input" class="toolbar-btn p-0 w-8" onchange="execFmt('foreColor', this.value)" />
+                                <button type="button" class="toolbar-btn" onclick="insertLink()">Link</button>
+                                <button type="button" class="toolbar-btn" onclick="insertEmbed()">Embed</button>
+                                <button type="button" class="toolbar-btn" onclick="toggleHtmlSource()">HTML Source</button>
+                                <button type="button" class="toolbar-btn bg-black text-white" onclick="handleSaveAboutMe()">Save</button>
+                                <button type="button" class="toolbar-btn" onclick="cancelAboutEdit()">Cancel</button>
+                            </div>
+                            <div id="about-me-view" class="text-xs text-gray-800 leading-relaxed"></div>
+                            <div id="about-me-editor" class="about-editor hidden" contenteditable="true"></div>
+                            <textarea id="about-me-source" class="about-editor hidden w-full font-mono" style="min-height:120px;"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Comments -->
+                    <div class="box">
+                        <div class="box-header">
+                            <span>Comments (<span id="comments-count">0</span>)</span>
+                            <a href="javascript:void(0)" onclick="focusCommentBox()" class="text-white text-xs font-bold underline">Add Comment</a>
+                        </div>
+                        <div class="box-body white">
+                            <div id="comments-list" class="flex flex-col gap-3"></div>
+                            <p id="comments-empty" class="text-xs text-gray-500 italic text-center py-4 hidden">There are no comments for this user.</p>
+                            <div id="add-comment-box" class="mt-3 pt-3 border-t border-gray-200 flex flex-col gap-2 hidden">
+                                <textarea id="new-comment-input" rows="3" placeholder="write a comment..." class="square-input w-full px-2 py-1.5 text-xs border border-gray-400"></textarea>
+                                <button onclick="handleAddComment()" class="btn-square self-start bg-black text-white text-xs font-bold px-4 py-1.5">Post Comment</button>
+                            </div>
+                            <p id="comment-login-msg" class="text-[11px] text-gray-500 italic mt-2 hidden">log in to leave a comment.</p>
+                        </div>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="box">
+                        <div class="box-header"><span>Reviews Made</span></div>
+                        <div class="box-body white">
+                            <div id="reviews-list" class="flex flex-col gap-3"></div>
+                            <p id="reviews-empty" class="text-xs text-gray-500 italic text-center py-4 hidden">this user hasn't written any reviews yet.</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </main>
@@ -123,7 +302,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import {
+            getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove,
+            collection, getDocs, addDoc, query, orderBy, serverTimestamp, increment
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const DEFAULT_PFP = "https://firebasestorage.googleapis.com/v0/b/testing-interme.firebasestorage.app/o/default.png?alt=media&token=449044bb-5706-4251-aa7d-fc3da295e5f3";
 
@@ -142,108 +324,96 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aniscope';
 
         const savedSession = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+        const viewerUsername = savedSession && savedSession.username ? savedSession.username.toLowerCase() : null;
+
         if (savedSession && savedSession.username) {
             const headerStatus = document.getElementById('user-header-status');
             if (headerStatus) {
-                headerStatus.innerHTML = `
-                    <span>welcome, <a href="profile.html?u=${encodeURIComponent(savedSession.username)}" class="hover:underline text-gray-900 font-bold">${savedSession.username}</a>!</span>
-                `;
+                headerStatus.innerHTML = `<span>welcome, <a href="/u/${encodeURIComponent(viewerUsername)}" class="hover:underline text-gray-900 font-bold">${savedSession.username}</a>!</span>`;
             }
         }
 
         window.handleGlobalSearch = function(event) {
             event.preventDefault();
             const q = document.getElementById('global-search-input').value.trim();
-            if (q) {
-                window.location.href = `search.html?query=${encodeURIComponent(q)}`;
-            }
+            if (q) window.location.href = `search.html?query=${encodeURIComponent(q)}`;
         };
 
-        function getProfileUser() {
+        function userRef(username) {
+            return doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
+        }
+        function profileUrl(username) {
+            return `${window.location.origin}/u/${encodeURIComponent(username)}`;
+        }
+
+        // ---- Resolve which profile to show: /u/username path, ?u= param, or the logged-in user ----
+        function getProfileUsername() {
+            const pathMatch = window.location.pathname.match(/\/u\/([^\/]+)\/?$/i);
+            if (pathMatch && pathMatch[1]) return decodeURIComponent(pathMatch[1]).trim().toLowerCase();
             const params = new URLSearchParams(window.location.search);
             let u = params.get('u');
-            if (!u && savedSession && savedSession.username) {
-                u = savedSession.username;
-            }
+            if (!u && viewerUsername) u = viewerUsername;
             return u ? u.trim().toLowerCase() : null;
         }
 
+        const targetUsername = getProfileUsername();
+        let isOwnProfile = false;
+        let viewerData = null;
+        let targetData = null;
+
+        window.toggleEditPanel = function(show) {
+            document.getElementById('own-profile-editor').classList.toggle('hidden', !show);
+            document.getElementById('own-profile-editor').classList.toggle('flex', show);
+        };
+
         async function loadProfile() {
-            const targetUsername = getProfileUser();
             const loadingEl = document.getElementById('profile-loading');
             const contentEl = document.getElementById('profile-content');
 
             if (!targetUsername) {
-                loadingEl.innerText = "no user specified or not logged in.";
+                loadingEl.innerText = "no user specified. log in or visit a profile URL like /u/someusername.";
                 return;
             }
 
             try {
-                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', targetUsername);
-                const userSnap = await getDoc(userDocRef);
-
-                if (!userSnap.exists()) {
+                const targetSnap = await getDoc(userRef(targetUsername));
+                if (!targetSnap.exists()) {
                     loadingEl.innerText = `user "${targetUsername}" not found.`;
                     return;
                 }
+                targetData = targetSnap.data();
 
-                const userData = userSnap.data();
-                document.getElementById('page-title').innerText = `aniscope: ${userData.username}`;
-                document.getElementById('profile-pfp').src = userData.pfp || DEFAULT_PFP;
-                document.getElementById('profile-username').innerText = userData.username;
-                document.getElementById('profile-joined').innerText = `joined: ${userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'unknown'}`;
-                document.getElementById('profile-location').innerText = userData.location ? `location: ${userData.location}` : '';
-                document.getElementById('profile-metext').innerText = userData.meText || 'no about me provided.';
-
-                // Render actions (add friend / pending / remove friend)
-                const actionsEl = document.getElementById('profile-actions');
-                actionsEl.innerHTML = '';
-
-                if (savedSession && savedSession.username.toLowerCase() === targetUsername) {
-                    actionsEl.innerHTML = `<a href="settings.html" class="btn-square px-4 py-2 text-xs font-bold bg-black text-white hover:bg-gray-800">edit profile</a>`;
-                } else if (savedSession) {
-                    const currentUserKey = savedSession.username.toLowerCase();
-                    const friends = userData.friends || [];
-                    const friendRequests = userData.friendRequests || [];
-
-                    const isFriend = friends.includes(currentUserKey);
-                    const hasRequested = friendRequests.includes(currentUserKey);
-
-                    if (isFriend) {
-                        actionsEl.innerHTML = `<button onclick="handleRemoveFriend('${targetUsername}')" class="btn-square px-4 py-2 text-xs font-bold bg-gray-300 text-gray-800 hover:bg-gray-400">remove friend</button>`;
-                    } else if (hasRequested) {
-                        actionsEl.innerHTML = `<button disabled class="btn-square px-4 py-2 text-xs font-bold bg-gray-200 text-gray-500 cursor-not-allowed">friend request pending</button>`;
-                    } else {
-                        actionsEl.innerHTML = `<button onclick="handleSendFriendRequest('${targetUsername}')" class="btn-square px-4 py-2 text-xs font-bold bg-black text-white hover:bg-gray-800">add friend</button>`;
-                    }
+                if (viewerUsername) {
+                    const viewerSnap = await getDoc(userRef(viewerUsername));
+                    if (viewerSnap.exists()) viewerData = viewerSnap.data();
                 }
 
-                // Render friends
-                const friendsContainer = document.getElementById('friends-container');
-                friendsContainer.innerHTML = '';
-                const friendList = userData.friends || [];
+                isOwnProfile = !!(viewerUsername && viewerUsername === targetUsername);
 
-                if (friendList.length === 0) {
-                    friendsContainer.innerHTML = `<p class="text-xs text-gray-500 italic col-span-full">no friends added yet.</p>`;
-                } else {
-                    for (const fName of friendList) {
-                        try {
-                            const fSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', fName));
-                            const fData = fSnap.exists() ? fSnap.data() : { username: fName, pfp: DEFAULT_PFP };
-                            const fCard = document.createElement('a');
-                            fCard.href = `profile.html?u=${encodeURIComponent(fData.username)}`;
-                            fCard.className = "flex items-center space-x-2 p-2 border border-gray-300 bg-[#f9f9f9] hover:bg-gray-100";
-                            fCard.innerHTML = `
-                                <img src="${fData.pfp || DEFAULT_PFP}" alt="${fData.username}" class="w-8 h-8 object-cover border border-gray-400" />
-                                <span class="text-xs font-bold text-blue-600 truncate">${fData.username}</span>
-                            `;
-                            friendsContainer.appendChild(fCard);
-                        } catch (e) {}
-                    }
-                }
+                document.getElementById('page-title').innerText = `aniscope: ${targetData.username}`;
+                document.getElementById('card-username').innerText = targetData.username;
+                document.getElementById('profile-pfp').src = targetData.pfp || DEFAULT_PFP;
+                document.getElementById('profile-joined').innerHTML = `Joined: <b>${targetData.createdAt ? new Date(targetData.createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'unknown'}</b>`;
+                document.getElementById('stat-followers').innerText = (targetData.followers || []).length;
+                document.getElementById('stat-following').innerText = (targetData.following || []).length;
+                document.getElementById('stat-friends').innerText = (targetData.friends || []).length;
+                document.getElementById('profile-url-text').innerText = profileUrl(targetData.username);
+
+                renderCardAction();
+                renderConnectBox();
+                renderAboutMe();
+                await Promise.all([
+                    renderPeopleGrid('friends', targetData.friends || []),
+                    renderPeopleGrid('followers', targetData.followers || []),
+                    renderPeopleGrid('following', targetData.following || [])
+                ]);
+                renderScopelist();
+                await renderComments();
+                await renderReviews();
 
                 loadingEl.classList.add('hidden');
                 contentEl.classList.remove('hidden');
+                contentEl.classList.add('grid');
 
             } catch (err) {
                 console.error("Error loading profile:", err);
@@ -251,35 +421,381 @@
             }
         }
 
-        window.handleSendFriendRequest = async function(targetUser) {
-            if (!savedSession) return;
-            try {
-                const targetRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', targetUser);
-                await updateDoc(targetRef, {
-                    friendRequests: arrayUnion(savedSession.username.toLowerCase())
+        function renderCardAction() {
+            const slot = document.getElementById('card-action-slot');
+            if (isOwnProfile) {
+                slot.innerHTML = `<button class="btn-follow" onclick="toggleEditPanel(true)">Edit Profile</button>`;
+                document.getElementById('edit-pfp-input').value = targetData.pfp || '';
+            } else if (viewerUsername) {
+                const isFollowing = (viewerData && viewerData.following || []).includes(targetUsername);
+                slot.innerHTML = `<button class="btn-follow ${isFollowing ? 'following' : ''}" onclick="handleFollowToggle()">${isFollowing ? 'Following' : 'Follow'}</button>`;
+            } else {
+                slot.innerHTML = `<a href="login.html" class="btn-follow">Follow</a>`;
+            }
+        }
+
+        function renderConnectBox() {
+            if (isOwnProfile) return;
+            const box = document.getElementById('connect-box');
+            box.classList.remove('hidden');
+            document.getElementById('connect-title').innerText = `Connect With ${targetData.username}`;
+            document.getElementById('connect-permalink').href = profileUrl(targetData.username);
+            document.getElementById('connect-permalink').innerText = profileUrl(targetData.username);
+
+            const isFriend = viewerData && (viewerData.friends || []).includes(targetUsername);
+            document.getElementById('add-friend-label').innerText = isFriend ? 'Friends \u2713' : 'Add as Friend';
+            const link = document.getElementById('add-friend-link');
+            link.onclick = isFriend ? () => handleRemoveFriend() : () => handleAddFriend();
+
+            if (!viewerUsername) {
+                document.querySelectorAll('.connect-link').forEach(el => {
+                    el.style.opacity = 0.5;
+                    el.onclick = () => alert('please log in to do that.');
                 });
-                alert("Friend request sent successfully!");
-                loadProfile();
-            } catch (err) {
-                console.error("Error sending friend request:", err);
+            }
+        }
+
+        // ---- About Me (rich text) ----
+        function renderAboutMe() {
+            const view = document.getElementById('about-me-view');
+            view.innerHTML = targetData.meTextHtml
+                ? targetData.meTextHtml
+                : `<span class="italic text-gray-500">${targetData.meText ? escapeHtml(targetData.meText) : 'no about me provided.'}</span>`;
+
+            if (isOwnProfile) {
+                document.getElementById('about-edit-toggle').classList.remove('hidden');
+                document.getElementById('about-edit-toggle').innerHTML = `<a href="javascript:void(0)" onclick="startAboutEdit()" class="text-white text-xs font-bold underline">Edit</a>`;
+            }
+        }
+
+        window.startAboutEdit = function() {
+            document.getElementById('about-toolbar').classList.remove('hidden');
+            document.getElementById('about-toolbar').classList.add('flex');
+            document.getElementById('about-me-view').classList.add('hidden');
+            const editor = document.getElementById('about-me-editor');
+            editor.classList.remove('hidden');
+            editor.innerHTML = targetData.meTextHtml || '';
+            document.execCommand('styleWithCSS', false, true);
+        };
+
+        window.cancelAboutEdit = function() {
+            document.getElementById('about-toolbar').classList.add('hidden');
+            document.getElementById('about-toolbar').classList.remove('flex');
+            document.getElementById('about-me-editor').classList.add('hidden');
+            document.getElementById('about-me-source').classList.add('hidden');
+            document.getElementById('about-me-view').classList.remove('hidden');
+        };
+
+        window.execFmt = function(cmd, val) {
+            document.getElementById('about-me-editor').focus();
+            document.execCommand(cmd, false, val || null);
+        };
+
+        window.insertLink = function() {
+            const url = prompt('Link URL (https://...)');
+            if (!url) return;
+            document.getElementById('about-me-editor').focus();
+            document.execCommand('createLink', false, url);
+        };
+
+        window.insertEmbed = function() {
+            const url = prompt('Embed URL (e.g. a YouTube embed link)');
+            if (!url) return;
+            document.getElementById('about-me-editor').focus();
+            document.execCommand('insertHTML', false, `<iframe src="${url}" style="width:100%;max-width:480px;height:270px;border:1px solid #999;" allowfullscreen></iframe>`);
+        };
+
+        let htmlSourceOpen = false;
+        window.toggleHtmlSource = function() {
+            const editor = document.getElementById('about-me-editor');
+            const source = document.getElementById('about-me-source');
+            htmlSourceOpen = !htmlSourceOpen;
+            if (htmlSourceOpen) {
+                source.value = editor.innerHTML;
+                editor.classList.add('hidden');
+                source.classList.remove('hidden');
+            } else {
+                editor.innerHTML = source.value;
+                source.classList.add('hidden');
+                editor.classList.remove('hidden');
             }
         };
 
-        window.handleRemoveFriend = async function(targetUser) {
-            if (!savedSession) return;
+        window.handleSaveAboutMe = async function() {
+            if (htmlSourceOpen) window.toggleHtmlSource();
+            const html = document.getElementById('about-me-editor').innerHTML;
             try {
-                const currentUserKey = savedSession.username.toLowerCase();
-                const targetRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', targetUser);
-                const currentRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUserKey);
-
-                await updateDoc(targetRef, { friends: arrayRemove(currentUserKey) });
-                await updateDoc(currentRef, { friends: arrayRemove(targetUser) });
-
-                loadProfile();
+                await updateDoc(userRef(targetUsername), { meTextHtml: html });
+                targetData.meTextHtml = html;
+                window.cancelAboutEdit();
+                renderAboutMe();
             } catch (err) {
-                console.error("Error removing friend:", err);
+                console.error(err);
+                alert('failed to save about me.');
             }
         };
+
+        // ---- Friends / Followers / Following grids ----
+        async function renderPeopleGrid(kind, usernames) {
+            const grid = document.getElementById(`${kind}-grid`);
+            const empty = document.getElementById(`${kind}-empty`);
+            grid.innerHTML = '';
+            if (!usernames.length) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+            const people = await Promise.all(usernames.map(async (u) => {
+                try {
+                    const snap = await getDoc(userRef(u));
+                    return snap.exists() ? snap.data() : { username: u, pfp: DEFAULT_PFP };
+                } catch (e) {
+                    return { username: u, pfp: DEFAULT_PFP };
+                }
+            }));
+            people.forEach(p => {
+                const a = document.createElement('a');
+                a.href = `/u/${encodeURIComponent(p.username)}`;
+                a.className = 'tile';
+                a.innerHTML = `<img src="${p.pfp || DEFAULT_PFP}" alt="${p.username}" /><span>${p.username}</span>`;
+                grid.appendChild(a);
+            });
+        }
+
+        // ---- Scopelist ----
+        function renderScopelist() {
+            const container = document.getElementById('scopelist-items');
+            const empty = document.getElementById('scopelist-empty');
+            const list = targetData.scopelist || [];
+            container.innerHTML = '';
+            empty.classList.toggle('hidden', list.length > 0);
+            list.forEach(title => {
+                const pill = document.createElement('span');
+                pill.className = 'pill';
+                pill.innerHTML = `<span>${escapeHtml(title)}</span>`;
+                if (isOwnProfile) {
+                    const btn = document.createElement('button');
+                    btn.innerText = '\u00d7';
+                    btn.onclick = () => handleRemoveScopelistItem(title);
+                    pill.appendChild(btn);
+                }
+                container.appendChild(pill);
+            });
+            if (isOwnProfile) {
+                document.getElementById('scopelist-editor').classList.remove('hidden');
+                document.getElementById('scopelist-editor').classList.add('flex');
+            }
+        }
+
+        window.handleAddScopelistItem = async function() {
+            const input = document.getElementById('scopelist-input');
+            const title = input.value.trim();
+            if (!title) return;
+            try {
+                await updateDoc(userRef(targetUsername), { scopelist: arrayUnion(title) });
+                targetData.scopelist = [...(targetData.scopelist || []), title];
+                input.value = '';
+                renderScopelist();
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        window.handleRemoveScopelistItem = async function(title) {
+            try {
+                await updateDoc(userRef(targetUsername), { scopelist: arrayRemove(title) });
+                targetData.scopelist = (targetData.scopelist || []).filter(t => t !== title);
+                renderScopelist();
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        // ---- Comments (left on this profile) ----
+        async function renderComments() {
+            const list = document.getElementById('comments-list');
+            const empty = document.getElementById('comments-empty');
+            list.innerHTML = '';
+            try {
+                const commentsSnap = await getDocs(query(collection(db, 'artifacts', appId, 'public', 'data', 'users', targetUsername, 'comments'), orderBy('createdAt', 'desc')));
+                document.getElementById('comments-count').innerText = commentsSnap.size;
+                document.getElementById('stat-comments').innerText = targetData.commentsMadeCount || 0;
+
+                if (commentsSnap.empty) {
+                    empty.classList.remove('hidden');
+                } else {
+                    empty.classList.add('hidden');
+                    commentsSnap.forEach(c => {
+                        const data = c.data();
+                        const div = document.createElement('div');
+                        div.className = 'border border-gray-200 p-2.5 text-xs';
+                        div.innerHTML = `<a href="/u/${encodeURIComponent(data.author)}" class="font-bold text-blue-700 hover:underline">${escapeHtml(data.author)}</a> <span class="text-gray-700">${escapeHtml(data.content)}</span>`;
+                        list.appendChild(div);
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+
+            if (viewerUsername) {
+                document.getElementById('add-comment-box').classList.remove('hidden');
+                document.getElementById('add-comment-box').classList.add('flex');
+            } else {
+                document.getElementById('comment-login-msg').classList.remove('hidden');
+            }
+        }
+
+        window.focusCommentBox = function() {
+            const box = document.getElementById('add-comment-box');
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('new-comment-input').focus();
+        };
+
+        window.handleAddComment = async function() {
+            if (!viewerUsername) { alert('please log in to comment.'); return; }
+            const input = document.getElementById('new-comment-input');
+            const content = input.value.trim();
+            if (!content) return;
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'users', targetUsername, 'comments'), {
+                    author: viewerUsername,
+                    content,
+                    createdAt: serverTimestamp()
+                });
+                await updateDoc(userRef(viewerUsername), { commentsMadeCount: increment(1) });
+                input.value = '';
+                await renderComments();
+            } catch (err) {
+                console.error(err);
+                alert('failed to post comment.');
+            }
+        };
+
+        // ---- Reviews authored by this user ----
+        async function renderReviews() {
+            const list = document.getElementById('reviews-list');
+            const empty = document.getElementById('reviews-empty');
+            list.innerHTML = '';
+            try {
+                const reviewsSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users', targetUsername, 'reviews'));
+                document.getElementById('stat-reviews').innerText = reviewsSnap.size;
+                if (reviewsSnap.empty) {
+                    empty.classList.remove('hidden');
+                } else {
+                    empty.classList.add('hidden');
+                    reviewsSnap.forEach(r => {
+                        const data = r.data();
+                        const div = document.createElement('div');
+                        div.className = 'border border-gray-200 p-2.5';
+                        div.innerHTML = `<h3 class="text-xs font-bold text-gray-900">${escapeHtml(data.title || data.animeTitle || 'Anime Review')}</h3><p class="text-xs text-gray-700 mt-1">${escapeHtml(data.content || '')}</p>`;
+                        list.appendChild(div);
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // ---- Actions: follow, friend, block, share, edit basic profile ----
+        window.handleFollowToggle = async function() {
+            if (!viewerUsername) { window.location.href = 'login.html'; return; }
+            const isFollowing = (viewerData.following || []).includes(targetUsername);
+            try {
+                if (isFollowing) {
+                    await updateDoc(userRef(targetUsername), { followers: arrayRemove(viewerUsername) });
+                    await updateDoc(userRef(viewerUsername), { following: arrayRemove(targetUsername) });
+                    viewerData.following = (viewerData.following || []).filter(u => u !== targetUsername);
+                    targetData.followers = (targetData.followers || []).filter(u => u !== viewerUsername);
+                } else {
+                    await updateDoc(userRef(targetUsername), { followers: arrayUnion(viewerUsername) });
+                    await updateDoc(userRef(viewerUsername), { following: arrayUnion(targetUsername) });
+                    viewerData.following = [...(viewerData.following || []), targetUsername];
+                    targetData.followers = [...(targetData.followers || []), viewerUsername];
+                }
+                document.getElementById('stat-followers').innerText = targetData.followers.length;
+                renderCardAction();
+                await renderPeopleGrid('followers', targetData.followers);
+            } catch (err) {
+                console.error(err);
+                alert('failed to update follow status.');
+            }
+        };
+
+        window.handleAddFriend = async function() {
+            if (!viewerUsername) { alert('please log in to add friends.'); return; }
+            try {
+                await updateDoc(userRef(targetUsername), { friends: arrayUnion(viewerUsername) });
+                await updateDoc(userRef(viewerUsername), { friends: arrayUnion(targetUsername) });
+                targetData.friends = [...(targetData.friends || []), viewerUsername];
+                viewerData.friends = [...(viewerData.friends || []), targetUsername];
+                document.getElementById('stat-friends').innerText = targetData.friends.length;
+                renderConnectBox();
+                await renderPeopleGrid('friends', targetData.friends);
+            } catch (err) {
+                console.error(err);
+                alert('failed to add friend.');
+            }
+        };
+
+        window.handleRemoveFriend = async function() {
+            try {
+                await updateDoc(userRef(targetUsername), { friends: arrayRemove(viewerUsername) });
+                await updateDoc(userRef(viewerUsername), { friends: arrayRemove(targetUsername) });
+                targetData.friends = (targetData.friends || []).filter(u => u !== viewerUsername);
+                viewerData.friends = (viewerData.friends || []).filter(u => u !== targetUsername);
+                document.getElementById('stat-friends').innerText = targetData.friends.length;
+                renderConnectBox();
+                await renderPeopleGrid('friends', targetData.friends);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        window.handleBlockUser = async function() {
+            if (!viewerUsername) { alert('please log in to block users.'); return; }
+            if (!confirm(`Block ${targetData.username}? You won't see their comments or requests.`)) return;
+            try {
+                await updateDoc(userRef(viewerUsername), { blocked: arrayUnion(targetUsername) });
+                alert('User blocked.');
+            } catch (err) {
+                console.error(err);
+                alert('failed to block user.');
+            }
+        };
+
+        window.handleShareAccount = async function() {
+            const url = profileUrl(targetData.username);
+            try {
+                await navigator.clipboard.writeText(url);
+                alert('Profile link copied to clipboard!');
+            } catch (e) {
+                prompt('Copy this link:', url);
+            }
+        };
+
+        window.handleSaveProfileBasic = async function() {
+            const newPfp = document.getElementById('edit-pfp-input').value.trim();
+            try {
+                await updateDoc(userRef(targetUsername), { pfp: newPfp || DEFAULT_PFP });
+                targetData.pfp = newPfp || DEFAULT_PFP;
+                document.getElementById('profile-pfp').src = targetData.pfp;
+                const session = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+                if (session) {
+                    session.pfp = targetData.pfp;
+                    localStorage.setItem('aniscope_session', JSON.stringify(session));
+                }
+                window.toggleEditPanel(false);
+            } catch (err) {
+                console.error(err);
+                alert('failed to save profile.');
+            }
+        };
+
+        function escapeHtml(str) {
+            const d = document.createElement('div');
+            d.innerText = str;
+            return d.innerHTML;
+        }
 
         loadProfile();
     </script>
