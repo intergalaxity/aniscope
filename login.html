@@ -147,7 +147,7 @@
             event.preventDefault();
             const q = document.getElementById('global-search-input').value.trim();
             if (q) {
-                window.location.href = `https://aniscope-six.vercel.app/search?=${encodeURIComponent(q)}`;
+                window.location.href = `https://aniscope-six.vercel.app/search?query=${encodeURIComponent(q)}`;
             }
         };
 
