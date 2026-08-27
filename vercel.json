@@ -1,1 +1,8 @@
-{ "cleanUrls": true, "rewrites": [ { "source": "/search=:query", "destination": "/search.html" }, { "source": "/:u((?!login|signup|profile|search|index|favicon|logo|reviews|news|scopelist|forums|about|as\\+).*)", "destination": "/profile.html?u=:u" } ] }
+{
+  "rewrites": [
+    {
+      "source": "/u/:username",
+      "destination": "/profile.html"
+    }
+  ]
+}
