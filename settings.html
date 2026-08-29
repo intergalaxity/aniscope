@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aniscope: settings</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background-color: #d8d8d8;
+        }
+        .nav-border { border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+        .nav-tab { border-right: 1px dotted #a3a3a3; transition: none !important; }
+        .nav-tab:first-child { border-left: 1px dotted #a3a3a3; }
+        .nav-tab:hover { background-color: #4a4a4a; }
+        .nav-tab:hover .tab-img { filter: invert(100%); }
+        .btn-square { border-radius: 0px !important; transition: none !important; }
+        .square-input { border-radius: 0px !important; }
+        .box { border: 1px solid #999; background: #fff; }
+        .box-header {
+            background-color: #6b6b6b; color: #fff; font-weight: bold; font-size: 13px;
+            padding: 6px 12px;
+        }
+        .box-body { padding: 16px; background: #fff; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-0 px-0 md:px-4">
+    <div class="w-full max-w-[980px] bg-white min-h-screen shadow-sm flex flex-col">
+        <div class="pt-1 pb-0 px-4">
+            <div class="flex items-end justify-between">
+                <a href="/" class="block">
+                    <img src="/logo.png" alt="aniscope" class="h-20 w-auto object-contain block" onerror="this.onerror=null; this.src='https://placehold.co/320x80/ffffff/111111?text=aniscope';" />
+                </a>
+                <div id="user-header-status" class="flex items-center space-x-3 font-semibold text-gray-700 text-[11px] pb-0.5">
+                    <a href="/login.html" class="hover:underline focus:outline-none">login</a>
+                    <span>|</span>
+                    <a href="/signup.html" class="hover:underline focus:outline-none">sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-border bg-[#f2f2f2] pl-0 pr-2 flex items-center justify-between">
+            <nav class="flex items-stretch text-sm font-bold text-gray-800">
+                <a href="/" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="/reviews.png" alt="reviews" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=reviews';" />
+                </a>
+                <a href="/" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="/news.png" alt="news" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=news';" />
+                </a>
+                <a href="/" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="/scopelist.png" alt="scopelist" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/90x28/f2f2f2/111111?text=scopelist';" />
+                </a>
+                <a href="/" class="nav-tab px-2 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="/as+.png" alt="as+" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/50x28/f2f2f2/111111?text=as%2B';" />
+                </a>
+                <a href="/" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="/forums.png" alt="forums" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/70x28/f2f2f2/111111?text=forums';" />
+                </a>
+                <a href="/" class="nav-tab px-4 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="/about.png" alt="about" class="h-8 w-auto tab-img scale-[1.5] transform" onerror="this.onerror=null; this.src='https://placehold.co/60x28/f2f2f2/111111?text=about';" />
+                </a>
+            </nav>
+            <form id="global-search-form" onsubmit="handleGlobalSearch(event)" class="flex items-center space-x-1 py-0.5">
+                <div class="relative flex items-center">
+                    <svg class="w-3.5 h-3.5 absolute left-2 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="global-search-input" placeholder="Search" class="square-input pl-7 pr-2 py-0.5 text-xs bg-white border border-gray-300 w-44 focus:outline-none focus:border-gray-500" />
+                </div>
+                <button type="submit" class="focus:outline-none flex items-center cursor-pointer">
+                    <img src="/go.png" alt="GO" class="h-6 w-auto block" onerror="this.onerror=null; this.src='https://placehold.co/32x24/cc0000/ffffff?text=GO';" />
+                </button>
+            </form>
+        </div>
+
+        <main class="flex-1 bg-white p-6 md:p-8">
+            <div class="max-w-2xl mx-auto flex flex-col gap-5">
+                <div id="settings-loading" class="py-16 text-center text-xs text-gray-500 italic">loading settings...</div>
+
+                <div id="settings-content" class="hidden flex flex-col gap-5">
+                    <h1 class="text-xl font-bold text-gray-900">Account Settings</h1>
+
+                    <div id="save-msg" class="hidden bg-green-100 border border-green-400 text-green-800 text-xs p-2 text-center"></div>
+                    <div id="error-msg" class="hidden bg-red-100 border border-red-400 text-red-700 text-xs p-2 text-center"></div>
+
+                    <div class="box">
+                        <div class="box-header">Profile Picture</div>
+                        <div class="box-body flex items-center gap-4">
+                            <img id="settings-pfp-preview" src="" alt="preview" class="w-16 h-16 object-cover border border-gray-400" />
+                            <div class="flex-1 flex flex-col gap-1">
+                                <label class="text-xs font-bold text-gray-700">Image URL</label>
+                                <input type="text" id="settings-pfp-input" oninput="updatePfpPreview()" placeholder="https://..." class="square-input px-2 py-1.5 text-xs border border-gray-400" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box">
+                        <div class="box-header">Account Info</div>
+                        <div class="box-body flex flex-col gap-2 text-xs text-gray-700">
+                            <p>Username: <span id="settings-username-display" class="font-bold text-gray-900"></span> <span class="italic text-gray-500">(cannot be changed)</span></p>
+                            <p>Email: <span id="settings-email-display" class="font-bold text-gray-900"></span></p>
+                            <p class="italic text-gray-500 mt-1">A custom website field is coming soon &mdash; for now your profile link is generated automatically.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="handleSaveSettings()" class="btn-square bg-black text-white text-sm font-bold px-6 py-2">Save Changes</button>
+                        <a id="back-to-profile-link" href="/" class="btn-square bg-gray-200 text-gray-800 text-sm font-bold px-6 py-2">Back to Profile</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const DEFAULT_PFP = "https://firebasestorage.googleapis.com/v0/b/testing-interme.firebasestorage.app/o/default.png?alt=media&token=449044bb-5706-4251-aa7d-fc3da295e5f3";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCywBwxsMjVWcI17BEyUUHXsKkaIq34VeM",
+            authDomain: "testing-interme.firebaseapp.com",
+            projectId: "testing-interme",
+            storageBucket: "testing-interme.firebasestorage.app",
+            messagingSenderId: "267474615661",
+            appId: "1:267474615661:web:efcd2aa5a7b91017936e64",
+            measurementId: "G-BL9G4PD8Z7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aniscope';
+
+        const savedSession = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+
+        if (!savedSession || !savedSession.username) {
+            window.location.href = '/login.html';
+        }
+
+        const username = savedSession ? savedSession.username.toLowerCase() : null;
+
+        if (savedSession && savedSession.username) {
+            const headerStatus = document.getElementById('user-header-status');
+            if (headerStatus) {
+                headerStatus.innerHTML = `<span>welcome, <a href="/u/${encodeURIComponent(username)}" class="hover:underline text-gray-900 font-bold">${savedSession.username}</a>!</span>`;
+            }
+            document.getElementById('back-to-profile-link').href = `/u/${encodeURIComponent(username)}`;
+        }
+
+        window.handleGlobalSearch = function(event) {
+            event.preventDefault();
+            const q = document.getElementById('global-search-input').value.trim();
+            if (q) window.location.href = `/search.html?query=${encodeURIComponent(q)}`;
+        };
+
+        window.updatePfpPreview = function() {
+            const val = document.getElementById('settings-pfp-input').value.trim();
+            document.getElementById('settings-pfp-preview').src = val || DEFAULT_PFP;
+        };
+
+        async function loadSettings() {
+            if (!username) return;
+            try {
+                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
+                const snap = await getDoc(userDocRef);
+                if (!snap.exists()) {
+                    document.getElementById('settings-loading').innerText = 'could not load your account.';
+                    return;
+                }
+                const data = snap.data();
+                document.getElementById('settings-pfp-input').value = data.pfp || '';
+                document.getElementById('settings-pfp-preview').src = data.pfp || DEFAULT_PFP;
+                document.getElementById('settings-username-display').innerText = data.username;
+                document.getElementById('settings-email-display').innerText = data.email || '';
+
+                document.getElementById('settings-loading').classList.add('hidden');
+                document.getElementById('settings-content').classList.remove('hidden');
+                document.getElementById('settings-content').classList.add('flex');
+            } catch (err) {
+                console.error(err);
+                document.getElementById('settings-loading').innerText = 'error loading settings.';
+            }
+        }
+
+        window.handleSaveSettings = async function() {
+            const pfpVal = document.getElementById('settings-pfp-input').value.trim();
+            const saveMsg = document.getElementById('save-msg');
+            const errorMsg = document.getElementById('error-msg');
+            saveMsg.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+
+            try {
+                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
+                await updateDoc(userDocRef, { pfp: pfpVal || DEFAULT_PFP });
+
+                const session = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+                if (session) {
+                    session.pfp = pfpVal || DEFAULT_PFP;
+                    localStorage.setItem('aniscope_session', JSON.stringify(session));
+                }
+
+                saveMsg.innerText = 'settings saved!';
+                saveMsg.classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                errorMsg.innerText = 'failed to save settings. please try again.';
+                errorMsg.classList.remove('hidden');
+            }
+        };
+
+        loadSettings();
+    </script>
+</body>
+</html>
