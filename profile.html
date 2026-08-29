@@ -84,9 +84,9 @@
                     <img src="/logo.png" alt="aniscope" class="h-20 w-auto object-contain block" onerror="this.onerror=null; this.src='https://placehold.co/320x80/ffffff/111111?text=aniscope';" />
                 </a>
                 <div id="user-header-status" class="flex items-center space-x-3 font-semibold text-gray-700 text-[11px] pb-0.5">
-                    <a href="/login.html" class="hover:underline focus:outline-none">login</a>
+                    <a href="/login" class="hover:underline focus:outline-none">login</a>
                     <span>|</span>
-                    <a href="/signup.html" class="hover:underline focus:outline-none">sign up</a>
+                    <a href="/signup" class="hover:underline focus:outline-none">sign up</a>
                 </div>
             </div>
         </div>
@@ -329,7 +329,7 @@
         window.handleGlobalSearch = function(event) {
             event.preventDefault();
             const q = document.getElementById('global-search-input').value.trim();
-            if (q) window.location.href = `/search.html?query=${encodeURIComponent(q)}`;
+            if (q) window.location.href = `/search?query=${encodeURIComponent(q)}`;
         };
 
         function userRef(username) {
@@ -339,29 +339,43 @@
             return `${window.location.origin}/u/${encodeURIComponent(username)}`;
         }
 
-        // ---- Resolve which profile to show: /u/username path, ?u= param, or the logged-in user ----
-        function getProfileUsername() {
+        // ---- Resolve which profile to show. The ONLY canonical URL is /u/{username} ----
+        // Anything else (bare /profile.html, or /profile.html?u=x) redirects there instead
+        // of silently rendering in place, so there's one link that always works and always
+        // has correctly-resolving image/asset paths.
+        function getPathUsername() {
             const pathMatch = window.location.pathname.match(/\/u\/([^\/]+)\/?$/i);
-            if (pathMatch && pathMatch[1]) return decodeURIComponent(pathMatch[1]).trim().toLowerCase();
-            const params = new URLSearchParams(window.location.search);
-            let u = params.get('u');
-            if (!u && viewerUsername) u = viewerUsername;
-            return u ? u.trim().toLowerCase() : null;
+            return pathMatch && pathMatch[1] ? decodeURIComponent(pathMatch[1]).trim().toLowerCase() : null;
         }
 
-        const targetUsername = getProfileUsername();
+        let targetUsername = getPathUsername();
         let isOwnProfile = false;
         let viewerData = null;
         let targetData = null;
 
+        async function resolveAndLoad() {
+            const loadingEl = document.getElementById('profile-loading');
+
+            if (!targetUsername) {
+                const params = new URLSearchParams(window.location.search);
+                let u = params.get('u');
+                if (!u && viewerUsername) u = viewerUsername;
+
+                if (u) {
+                    window.location.replace('/u/' + encodeURIComponent(u.trim().toLowerCase()));
+                    return;
+                }
+
+                loadingEl.innerHTML = 'no user specified. <a href="/login" class="text-blue-700 underline">log in</a> or visit a profile URL like /u/someusername.';
+                return;
+            }
+
+            await loadProfile();
+        }
+
         async function loadProfile() {
             const loadingEl = document.getElementById('profile-loading');
             const contentEl = document.getElementById('profile-content');
-
-            if (!targetUsername) {
-                loadingEl.innerText = "no user specified. log in or visit a profile URL like /u/someusername.";
-                return;
-            }
 
             try {
                 const targetSnap = await getDoc(userRef(targetUsername));
@@ -416,7 +430,7 @@
                 const isFollowing = (viewerData && viewerData.following || []).includes(targetUsername);
                 slot.innerHTML = `<button class="btn-follow ${isFollowing ? 'following' : ''}" onclick="handleFollowToggle()">${isFollowing ? 'Following' : 'Follow'}</button>`;
             } else {
-                slot.innerHTML = `<a href="/login.html" class="btn-follow">Follow</a>`;
+                slot.innerHTML = `<a href="/login" class="btn-follow">Follow</a>`;
             }
         }
 
@@ -765,7 +779,7 @@
             return d.innerHTML;
         }
 
-        loadProfile();
+        resolveAndLoad();
     </script>
 </body>
 </html>
