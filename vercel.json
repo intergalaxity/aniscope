@@ -3,6 +3,10 @@
     {
       "source": "/u/:username",
       "destination": "/profile.html"
+    },
+    {
+      "source": "/settings",
+      "destination": "/settings.html"
     }
   ]
 }
