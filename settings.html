@@ -19,11 +19,13 @@
         .btn-square { border-radius: 0px !important; transition: none !important; }
         .square-input { border-radius: 0px !important; }
         .box { border: 1px solid #999; background: #fff; }
-        .box-header {
-            background-color: #6b6b6b; color: #fff; font-weight: bold; font-size: 13px;
-            padding: 6px 12px;
-        }
+        .box-header { background-color: #6b6b6b; color: #fff; font-weight: bold; font-size: 13px; padding: 6px 12px; }
+        .box-header.danger { background-color: #7a2626; }
         .box-body { padding: 16px; background: #fff; }
+        .field-label { font-size: 11px; font-weight: bold; color: #444; }
+        .msg { font-size: 11px; padding: 4px 0; }
+        .msg.ok { color: #166534; }
+        .msg.err { color: #b91c1c; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-0 px-0 md:px-4">
@@ -34,9 +36,9 @@
                     <img src="/logo.png" alt="aniscope" class="h-20 w-auto object-contain block" onerror="this.onerror=null; this.src='https://placehold.co/320x80/ffffff/111111?text=aniscope';" />
                 </a>
                 <div id="user-header-status" class="flex items-center space-x-3 font-semibold text-gray-700 text-[11px] pb-0.5">
-                    <a href="/login.html" class="hover:underline focus:outline-none">login</a>
+                    <a href="/login" class="hover:underline focus:outline-none">login</a>
                     <span>|</span>
-                    <a href="/signup.html" class="hover:underline focus:outline-none">sign up</a>
+                    <a href="/signup" class="hover:underline focus:outline-none">sign up</a>
                 </div>
             </div>
         </div>
@@ -79,36 +81,80 @@
             <div class="max-w-2xl mx-auto flex flex-col gap-5">
                 <div id="settings-loading" class="py-16 text-center text-xs text-gray-500 italic">loading settings...</div>
 
-                <div id="settings-content" class="hidden flex flex-col gap-5">
-                    <h1 class="text-xl font-bold text-gray-900">Account Settings</h1>
+                <div id="settings-content" class="hidden flex-col gap-5">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl font-bold text-gray-900">Account Settings</h1>
+                        <a id="back-to-profile-link" href="/" class="text-xs text-blue-700 hover:underline font-bold">&larr; back to my profile</a>
+                    </div>
 
-                    <div id="save-msg" class="hidden bg-green-100 border border-green-400 text-green-800 text-xs p-2 text-center"></div>
-                    <div id="error-msg" class="hidden bg-red-100 border border-red-400 text-red-700 text-xs p-2 text-center"></div>
-
+                    <!-- Profile picture -->
                     <div class="box">
                         <div class="box-header">Profile Picture</div>
                         <div class="box-body flex items-center gap-4">
-                            <img id="settings-pfp-preview" src="" alt="preview" class="w-16 h-16 object-cover border border-gray-400" />
+                            <img id="settings-pfp-preview" src="" alt="preview" class="w-16 h-16 object-cover border border-gray-400 flex-shrink-0" />
                             <div class="flex-1 flex flex-col gap-1">
-                                <label class="text-xs font-bold text-gray-700">Image URL</label>
-                                <input type="text" id="settings-pfp-input" oninput="updatePfpPreview()" placeholder="https://..." class="square-input px-2 py-1.5 text-xs border border-gray-400" />
+                                <label class="field-label">Upload a new picture</label>
+                                <input type="file" id="settings-pfp-file" accept="image/*" onchange="handlePfpFileChange(event)" class="text-xs" />
+                                <p id="pfp-upload-status" class="msg hidden"></p>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Username -->
                     <div class="box">
-                        <div class="box-header">Account Info</div>
-                        <div class="box-body flex flex-col gap-2 text-xs text-gray-700">
-                            <p>Username: <span id="settings-username-display" class="font-bold text-gray-900"></span> <span class="italic text-gray-500">(cannot be changed)</span></p>
-                            <p>Email: <span id="settings-email-display" class="font-bold text-gray-900"></span></p>
-                            <p class="italic text-gray-500 mt-1">A custom website field is coming soon &mdash; for now your profile link is generated automatically.</p>
+                        <div class="box-header">Username</div>
+                        <div class="box-body flex flex-col gap-2">
+                            <p class="text-xs text-gray-700">Current username: <span id="current-username-display" class="font-bold text-gray-900"></span></p>
+                            <label class="field-label">New username</label>
+                            <input type="text" id="new-username-input" placeholder="new username" class="square-input px-2 py-1.5 text-xs border border-gray-400" />
+                            <p class="text-[11px] text-gray-500">Letters A-Z or numbers 0-9 only, 3-20 characters. You can only change your username once every 24 hours.</p>
+                            <p id="username-rate-limit-msg" class="msg hidden"></p>
+                            <button onclick="handleSaveUsername()" id="username-save-btn" class="btn-square self-start bg-black text-white text-xs font-bold px-4 py-1.5 mt-1">Change Username</button>
+                            <p id="username-msg" class="msg hidden"></p>
                         </div>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button onclick="handleSaveSettings()" class="btn-square bg-black text-white text-sm font-bold px-6 py-2">Save Changes</button>
-                        <a id="back-to-profile-link" href="/" class="btn-square bg-gray-200 text-gray-800 text-sm font-bold px-6 py-2">Back to Profile</a>
+                    <!-- Email -->
+                    <div class="box">
+                        <div class="box-header">Email Address</div>
+                        <div class="box-body flex flex-col gap-2">
+                            <label class="field-label">Email</label>
+                            <input type="email" id="settings-email-input" class="square-input px-2 py-1.5 text-xs border border-gray-400" />
+                            <button onclick="handleSaveEmail()" class="btn-square self-start bg-black text-white text-xs font-bold px-4 py-1.5 mt-1">Save Email</button>
+                            <p id="email-msg" class="msg hidden"></p>
+                        </div>
                     </div>
+
+                    <!-- Password -->
+                    <div class="box">
+                        <div class="box-header">Change Password</div>
+                        <div class="box-body flex flex-col gap-2">
+                            <label class="field-label">Current password</label>
+                            <input type="password" id="current-password-input" class="square-input px-2 py-1.5 text-xs border border-gray-400" />
+                            <label class="field-label mt-1">New password</label>
+                            <input type="password" id="new-password-input" class="square-input px-2 py-1.5 text-xs border border-gray-400" />
+                            <label class="field-label mt-1">Confirm new password</label>
+                            <input type="password" id="confirm-password-input" class="square-input px-2 py-1.5 text-xs border border-gray-400" />
+                            <button onclick="handleSavePassword()" class="btn-square self-start bg-black text-white text-xs font-bold px-4 py-1.5 mt-1">Change Password</button>
+                            <p id="password-msg" class="msg hidden"></p>
+                        </div>
+                    </div>
+
+                    <!-- Danger zone -->
+                    <div class="box">
+                        <div class="box-header danger">Log Out / Delete Account</div>
+                        <div class="box-body flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <p class="text-xs text-gray-700">Sign out of aniscope on this device.</p>
+                                <button onclick="handleLogout()" class="btn-square bg-gray-300 text-gray-800 text-xs font-bold px-4 py-1.5">Log Out</button>
+                            </div>
+                            <div class="border-t border-gray-200 pt-3 flex items-center justify-between">
+                                <p class="text-xs text-gray-700">Permanently delete your account, reviews, and comments. This cannot be undone.</p>
+                                <button onclick="handleDeleteAccount()" class="btn-square bg-red-700 text-white text-xs font-bold px-4 py-1.5">Delete Account</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </main>
@@ -116,7 +162,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import {
+            getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
+            collection, getDocs, query, where
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import {
+            getStorage, ref as storageRef, uploadBytes, getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const DEFAULT_PFP = "https://firebasestorage.googleapis.com/v0/b/testing-interme.firebasestorage.app/o/default.png?alt=media&token=449044bb-5706-4251-aa7d-fc3da295e5f3";
 
@@ -132,49 +184,67 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const storage = getStorage(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aniscope';
+        const USERNAME_CHANGE_COOLDOWN_HOURS = 24;
 
         const savedSession = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
-
         if (!savedSession || !savedSession.username) {
-            window.location.href = '/login.html';
+            window.location.href = '/login';
         }
 
-        const username = savedSession ? savedSession.username.toLowerCase() : null;
+        let username = savedSession ? savedSession.username.toLowerCase() : null;
 
-        if (savedSession && savedSession.username) {
+        function userRef(u) { return doc(db, 'artifacts', appId, 'public', 'data', 'users', u); }
+        function usersCol() { return collection(db, 'artifacts', appId, 'public', 'data', 'users'); }
+
+        function refreshHeader() {
             const headerStatus = document.getElementById('user-header-status');
             if (headerStatus) {
                 headerStatus.innerHTML = `<span>welcome, <a href="/u/${encodeURIComponent(username)}" class="hover:underline text-gray-900 font-bold">${savedSession.username}</a>!</span>`;
             }
             document.getElementById('back-to-profile-link').href = `/u/${encodeURIComponent(username)}`;
         }
+        refreshHeader();
 
         window.handleGlobalSearch = function(event) {
             event.preventDefault();
             const q = document.getElementById('global-search-input').value.trim();
-            if (q) window.location.href = `/search.html?query=${encodeURIComponent(q)}`;
+            if (q) window.location.href = `/search?query=${encodeURIComponent(q)}`;
         };
 
-        window.updatePfpPreview = function() {
-            const val = document.getElementById('settings-pfp-input').value.trim();
-            document.getElementById('settings-pfp-preview').src = val || DEFAULT_PFP;
-        };
+        function showMsg(id, text, ok) {
+            const el = document.getElementById(id);
+            el.innerText = text;
+            el.className = `msg ${ok ? 'ok' : 'err'}`;
+            el.classList.remove('hidden');
+        }
+
+        // ---- Load current data ----
+        let userData = null;
 
         async function loadSettings() {
             if (!username) return;
             try {
-                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
-                const snap = await getDoc(userDocRef);
+                const snap = await getDoc(userRef(username));
                 if (!snap.exists()) {
                     document.getElementById('settings-loading').innerText = 'could not load your account.';
                     return;
                 }
-                const data = snap.data();
-                document.getElementById('settings-pfp-input').value = data.pfp || '';
-                document.getElementById('settings-pfp-preview').src = data.pfp || DEFAULT_PFP;
-                document.getElementById('settings-username-display').innerText = data.username;
-                document.getElementById('settings-email-display').innerText = data.email || '';
+                userData = snap.data();
+                document.getElementById('settings-pfp-preview').src = userData.pfp || DEFAULT_PFP;
+                document.getElementById('current-username-display').innerText = userData.username;
+                document.getElementById('settings-email-input').value = userData.email || '';
+
+                if (userData.usernameChangedAt) {
+                    const hoursSince = (Date.now() - new Date(userData.usernameChangedAt).getTime()) / 36e5;
+                    if (hoursSince < USERNAME_CHANGE_COOLDOWN_HOURS) {
+                        const hoursLeft = Math.ceil(USERNAME_CHANGE_COOLDOWN_HOURS - hoursSince);
+                        showMsg('username-rate-limit-msg', `You can change your username again in about ${hoursLeft} hour(s).`, false);
+                        document.getElementById('username-save-btn').disabled = true;
+                        document.getElementById('username-save-btn').classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                }
 
                 document.getElementById('settings-loading').classList.add('hidden');
                 document.getElementById('settings-content').classList.remove('hidden');
@@ -185,29 +255,241 @@
             }
         }
 
-        window.handleSaveSettings = async function() {
-            const pfpVal = document.getElementById('settings-pfp-input').value.trim();
-            const saveMsg = document.getElementById('save-msg');
-            const errorMsg = document.getElementById('error-msg');
-            saveMsg.classList.add('hidden');
-            errorMsg.classList.add('hidden');
+        function updateSession(patch) {
+            const session = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
+            if (session) {
+                Object.assign(session, patch);
+                localStorage.setItem('aniscope_session', JSON.stringify(session));
+            }
+        }
+
+        // ---- Profile picture upload ----
+        window.handlePfpFileChange = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { alert('please select an image file.'); return; }
+
+            const preview = document.getElementById('settings-pfp-preview');
+            preview.src = URL.createObjectURL(file);
+
+            const statusEl = document.getElementById('pfp-upload-status');
+            statusEl.classList.remove('hidden');
+            statusEl.className = 'msg';
+            statusEl.innerText = 'uploading...';
 
             try {
-                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
-                await updateDoc(userDocRef, { pfp: pfpVal || DEFAULT_PFP });
+                const path = `profile-pictures/${username}/${Date.now()}_${file.name}`;
+                const fileRef = storageRef(storage, path);
+                await uploadBytes(fileRef, file);
+                const url = await getDownloadURL(fileRef);
 
-                const session = JSON.parse(localStorage.getItem('aniscope_session') || 'null');
-                if (session) {
-                    session.pfp = pfpVal || DEFAULT_PFP;
-                    localStorage.setItem('aniscope_session', JSON.stringify(session));
-                }
+                await updateDoc(userRef(username), { pfp: url });
+                updateSession({ pfp: url });
 
-                saveMsg.innerText = 'settings saved!';
-                saveMsg.classList.remove('hidden');
+                statusEl.className = 'msg ok';
+                statusEl.innerText = 'uploaded!';
+                setTimeout(() => statusEl.classList.add('hidden'), 2500);
             } catch (err) {
                 console.error(err);
-                errorMsg.innerText = 'failed to save settings. please try again.';
-                errorMsg.classList.remove('hidden');
+                statusEl.className = 'msg err';
+                statusEl.innerText = 'upload failed. (check that Firebase Storage rules allow writes)';
+            }
+        };
+
+        // ---- Reference cleanup helpers (followers/following/friends arrays on OTHER users) ----
+        async function findDocsReferencing(field, value) {
+            const snap = await getDocs(query(usersCol(), where(field, 'array-contains', value)));
+            const map = new Map();
+            snap.forEach(d => map.set(d.id, d.data()));
+            return map;
+        }
+
+        async function renameUsernameEverywhere(oldU, newU) {
+            const fields = ['followers', 'following', 'friends'];
+            const affected = new Map();
+            for (const field of fields) {
+                const found = await findDocsReferencing(field, oldU);
+                found.forEach((data, id) => affected.set(id, data));
+            }
+            for (const [id, data] of affected.entries()) {
+                const updates = {};
+                fields.forEach(f => {
+                    if (Array.isArray(data[f]) && data[f].includes(oldU)) {
+                        updates[f] = data[f].map(u => (u === oldU ? newU : u));
+                    }
+                });
+                if (Object.keys(updates).length) {
+                    await updateDoc(userRef(id), updates);
+                }
+            }
+        }
+
+        async function removeUsernameEverywhere(target) {
+            const fields = ['followers', 'following', 'friends'];
+            const affected = new Map();
+            for (const field of fields) {
+                const found = await findDocsReferencing(field, target);
+                found.forEach((data, id) => affected.set(id, data));
+            }
+            for (const [id, data] of affected.entries()) {
+                const updates = {};
+                fields.forEach(f => {
+                    if (Array.isArray(data[f]) && data[f].includes(target)) {
+                        updates[f] = data[f].filter(u => u !== target);
+                    }
+                });
+                if (Object.keys(updates).length) {
+                    await updateDoc(userRef(id), updates);
+                }
+            }
+        }
+
+        async function copySubcollections(oldU, newU) {
+            for (const sub of ['reviews', 'comments']) {
+                const subSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users', oldU, sub));
+                for (const d of subSnap.docs) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', newU, sub, d.id), d.data());
+                    await deleteDoc(d.ref);
+                }
+            }
+        }
+
+        // ---- Username change ----
+        window.handleSaveUsername = async function() {
+            const input = document.getElementById('new-username-input');
+            const rawNew = input.value.trim();
+            const newU = rawNew.toLowerCase();
+            const oldU = username;
+
+            document.getElementById('username-msg').classList.add('hidden');
+
+            const userRegex = /^[a-zA-Z0-9]{3,20}$/;
+            if (!userRegex.test(rawNew)) {
+                showMsg('username-msg', 'username must be 3-20 letters/numbers only.', false);
+                return;
+            }
+            if (newU === oldU) {
+                showMsg('username-msg', 'that is already your username.', false);
+                return;
+            }
+
+            if (userData.usernameChangedAt) {
+                const hoursSince = (Date.now() - new Date(userData.usernameChangedAt).getTime()) / 36e5;
+                if (hoursSince < USERNAME_CHANGE_COOLDOWN_HOURS) {
+                    const hoursLeft = Math.ceil(USERNAME_CHANGE_COOLDOWN_HOURS - hoursSince);
+                    showMsg('username-msg', `you can change your username again in about ${hoursLeft} hour(s).`, false);
+                    return;
+                }
+            }
+
+            try {
+                const newSnap = await getDoc(userRef(newU));
+                if (newSnap.exists()) {
+                    showMsg('username-msg', 'that username is already taken.', false);
+                    return;
+                }
+
+                const now = new Date().toISOString();
+                const newData = { ...userData, username: rawNew, usernameChangedAt: now };
+                await setDoc(userRef(newU), newData);
+                await copySubcollections(oldU, newU);
+                await renameUsernameEverywhere(oldU, newU);
+                await deleteDoc(userRef(oldU));
+
+                updateSession({ username: rawNew });
+                username = newU;
+                userData = newData;
+
+                showMsg('username-msg', 'username changed! redirecting to your new profile...', true);
+                setTimeout(() => { window.location.href = '/u/' + encodeURIComponent(newU); }, 1200);
+            } catch (err) {
+                console.error(err);
+                showMsg('username-msg', 'failed to change username. please try again.', false);
+            }
+        };
+
+        // ---- Email change ----
+        window.handleSaveEmail = async function() {
+            const newEmail = document.getElementById('settings-email-input').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            document.getElementById('email-msg').classList.add('hidden');
+
+            if (!emailRegex.test(newEmail)) {
+                showMsg('email-msg', 'please enter a valid email address.', false);
+                return;
+            }
+            try {
+                await updateDoc(userRef(username), { email: newEmail });
+                updateSession({ email: newEmail });
+                userData.email = newEmail;
+                showMsg('email-msg', 'email updated!', true);
+            } catch (err) {
+                console.error(err);
+                showMsg('email-msg', 'failed to update email.', false);
+            }
+        };
+
+        // ---- Password change ----
+        window.handleSavePassword = async function() {
+            const current = document.getElementById('current-password-input').value;
+            const next = document.getElementById('new-password-input').value;
+            const confirm = document.getElementById('confirm-password-input').value;
+            document.getElementById('password-msg').classList.add('hidden');
+
+            if (!current || !next) {
+                showMsg('password-msg', 'please fill out all password fields.', false);
+                return;
+            }
+            if (next !== confirm) {
+                showMsg('password-msg', 'new passwords do not match.', false);
+                return;
+            }
+            try {
+                const snap = await getDoc(userRef(username));
+                const freshData = snap.data();
+                if (freshData.password !== current) {
+                    showMsg('password-msg', 'current password is incorrect.', false);
+                    return;
+                }
+                await updateDoc(userRef(username), { password: next });
+                document.getElementById('current-password-input').value = '';
+                document.getElementById('new-password-input').value = '';
+                document.getElementById('confirm-password-input').value = '';
+                showMsg('password-msg', 'password updated!', true);
+            } catch (err) {
+                console.error(err);
+                showMsg('password-msg', 'failed to update password.', false);
+            }
+        };
+
+        // ---- Logout ----
+        window.handleLogout = function() {
+            if (!confirm('Log out of aniscope on this device?')) return;
+            localStorage.removeItem('aniscope_session');
+            window.location.href = '/';
+        };
+
+        // ---- Delete account ----
+        window.handleDeleteAccount = async function() {
+            if (!confirm('This will permanently delete your account, reviews, and comments. This cannot be undone. Continue?')) return;
+            const typed = prompt(`Type your username ("${username}") to confirm deletion:`);
+            if (!typed || typed.trim().toLowerCase() !== username) {
+                alert('Username did not match. Deletion cancelled.');
+                return;
+            }
+            try {
+                for (const sub of ['reviews', 'comments']) {
+                    const subSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users', username, sub));
+                    for (const d of subSnap.docs) await deleteDoc(d.ref);
+                }
+                await removeUsernameEverywhere(username);
+                await deleteDoc(userRef(username));
+                localStorage.removeItem('aniscope_session');
+                alert('Account deleted.');
+                window.location.href = '/';
+            } catch (err) {
+                console.error(err);
+                alert('failed to delete account. please try again.');
             }
         };
 
